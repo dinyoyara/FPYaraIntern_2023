@@ -24,7 +24,11 @@ export class Warehouse extends Model {
   @Column
   name: string;
 
-  @Column
+  @Column({
+    validate: {
+      min: 10,
+    },
+  })
   size: number;
 
   @Column({
