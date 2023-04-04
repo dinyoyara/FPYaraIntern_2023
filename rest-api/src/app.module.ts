@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 
 import { Customer } from './customers/customers.model';
 import { CustomersModule } from './customers/customers.module';
+import { WarehousesModule } from './warehouses/warehouses.module';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ dotenv.config();
       isGlobal: true,
     }),
     CustomersModule,
+    WarehousesModule,
   ],
 })
 export class AppModule {}
