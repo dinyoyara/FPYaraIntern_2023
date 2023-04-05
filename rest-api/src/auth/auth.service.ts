@@ -16,7 +16,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async createCustomerAsync(dto: SignupDto): Promise<Customer> {
+  createCustomerAsync = async (dto: SignupDto): Promise<Customer> => {
     const customer = await this.customerModel.create({
       name: dto.name,
       password: await hashPasswordAsync(dto.password),
@@ -27,9 +27,9 @@ export class AuthService {
     delete customer.dataValues.deletedAt;
     delete customer.dataValues.updatedAt;
     return customer;
-  }
+  };
 
-  async loginAsync(dto: SigninDto): Promise<TokenDto> {
+  loginAsync = async (dto: SigninDto): Promise<TokenDto> => {
     const customer = await this.customerModel.findOne({
       where: { email: dto.email },
     });
@@ -41,9 +41,9 @@ export class AuthService {
     );
     if (!correctPassword) throw new ForbiddenException('Password incorrect');
     return this.signTokenAsync(customer.id);
-  }
+  };
 
-  private async signTokenAsync(id: string): Promise<TokenDto> {
+  private signTokenAsync = async (id: string): Promise<TokenDto> => {
     const payload = {
       id: id,
     };
@@ -55,5 +55,5 @@ export class AuthService {
     });
 
     return { token: token };
-  }
+  };
 }
