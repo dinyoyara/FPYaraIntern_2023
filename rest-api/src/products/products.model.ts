@@ -33,7 +33,9 @@ export class Product extends Model {
   name: string;
 
   @Min(PRODUCT_MIN_PRICE)
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+  })
   price: number;
 
   @Min(PRODUCT_MIN_SIZE)
