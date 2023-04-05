@@ -37,12 +37,16 @@ export class WarehousesController {
   update(
     @Body() dto: CreateWarehouseDto,
     @Param('id') id: string,
+    @GetUser('id') customerId: string,
   ): Promise<Warehouse> {
-    return this.warehousesService.updateAsync(id, dto);
+    return this.warehousesService.updateAsync(id, customerId, dto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): Promise<Warehouse> {
-    return this.warehousesService.deleteByIdAsync(id);
+  delete(
+    @Param('id') id: string,
+    @GetUser('id') customerId: string,
+  ): Promise<Warehouse> {
+    return this.warehousesService.deleteByIdAsync(id, customerId);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Warehouse } from './warehouses.model';
 import { CreateWarehouseDto } from './dto';
@@ -33,8 +33,13 @@ export class WarehousesService {
 
   updateAsync = async (
     id: string,
+    customerId: string,
     dto: CreateWarehouseDto,
   ): Promise<Warehouse> => {
+    const warehouse = await this.warehouseModel.findByPk(id);
+    if (warehouse.customerId != customerId) {
+      throw new ForbiddenException('not authorized');
+    }
     await this.warehouseModel.update(
       {
         name: dto.name,
@@ -48,8 +53,14 @@ export class WarehousesService {
     return this.warehouseModel.findByPk(id);
   };
 
-  deleteByIdAsync = async (id: string): Promise<Warehouse> => {
+  deleteByIdAsync = async (
+    id: string,
+    customerId: string,
+  ): Promise<Warehouse> => {
     const warehouse = await this.warehouseModel.findByPk(id);
+    if (warehouse.customerId != customerId) {
+      throw new ForbiddenException('not authorized');
+    }
     warehouse.destroy();
     return warehouse;
   };
