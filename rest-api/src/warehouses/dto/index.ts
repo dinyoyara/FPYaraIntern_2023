@@ -1,1 +1,1 @@
-export * from './createWarehouse';
+export * from './warehouse.dto';
