@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { Customer } from 'src/customers/customers.model';
 import { SignupDto } from './dto';
+import { Customer } from 'src/customers/customers.model';
+import { hashPasswordAsync } from './helpers';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
   async createCustomerAsync(dto: SignupDto): Promise<Customer> {
     const customer = await this.customerModel.create({
       name: dto.name,
-      password: dto.password,
+      password: await hashPasswordAsync(dto.password),
       email: dto.email,
     });
 
