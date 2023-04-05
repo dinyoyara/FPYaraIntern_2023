@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 
 import { Customer } from '../customers/customers.model';
 import { Warehouse } from '../warehouses/warehouses.model';
+import { Product } from '../products/products.model';
+import { Movement } from '../movements/movements.model';
 
 dotenv.config();
 
@@ -15,7 +17,7 @@ const databaseConfig: SequelizeModuleOptions = {
   database: process.env.POSTGRES_DATABASE,
   autoLoadModels: true,
   synchronize: true,
-  models: [Customer, Warehouse],
+  models: [Customer, Warehouse, Product, Movement],
 };
 
 export default databaseConfig;
