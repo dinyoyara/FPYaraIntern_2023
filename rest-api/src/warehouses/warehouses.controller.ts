@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 
 import { WarehousesService } from './warehouses.service';
 import { Warehouse } from './warehouses.model';
@@ -22,5 +31,18 @@ export class WarehousesController {
   @Get()
   getAll(@GetUser('id') customerId: string): Promise<Warehouse[]> {
     return this.warehousesService.getAllByCustomerIdAsync(customerId);
+  }
+
+  @Put(':id')
+  update(
+    @Body() dto: CreateWarehouseDto,
+    @Param('id') id: string,
+  ): Promise<Warehouse> {
+    return this.warehousesService.updateAsync(id, dto);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string): Promise<Warehouse> {
+    return this.warehousesService.deleteByIdAsync(id);
   }
 }
