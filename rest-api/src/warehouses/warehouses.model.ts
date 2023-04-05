@@ -4,13 +4,22 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
+  HasMany,
+  Length,
+  Min,
   Model,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
 
 import { Customer } from '../customers/customers.model';
-import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../constants';
+import {
+  HAZARDOUS,
+  NON_HAZARDOUS,
+  UNKNOWN,
+  WAREHOUSE_MIN_SIZE,
+} from '../constants';
+import { Movement } from 'src/movements/movements.model';
 
 @Table
 export class Warehouse extends Model {
@@ -21,14 +30,12 @@ export class Warehouse extends Model {
   })
   id: string;
 
+  @Length({ min: 3 })
   @Column
   name: string;
 
-  @Column({
-    validate: {
-      min: 10,
-    },
-  })
+  @Min(WAREHOUSE_MIN_SIZE)
+  @Column
   size: number;
 
   @Column({
@@ -36,10 +43,6 @@ export class Warehouse extends Model {
     defaultValue: UNKNOWN,
   })
   type: string;
-
-  @DeletedAt
-  @Column
-  deletedAt?: Date;
 
   @ForeignKey(() => Customer)
   @Column({
@@ -51,6 +54,16 @@ export class Warehouse extends Model {
   })
   customerId: string;
 
+  @DeletedAt
+  @Column
+  deletedAt?: Date;
+
   @BelongsTo(() => Customer)
   customer: Customer;
+
+  @HasMany(() => Movement, 'exportedWarehouseId')
+  exportedMovements: Movement[];
+
+  @HasMany(() => Movement, 'importedWarehouseId')
+  importedMovements: Movement[];
 }

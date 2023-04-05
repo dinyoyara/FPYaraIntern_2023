@@ -3,6 +3,8 @@ import {
   DataType,
   DeletedAt,
   HasMany,
+  IsEmail,
+  Length,
   Model,
   PrimaryKey,
   Table,
@@ -19,13 +21,16 @@ export class Customer extends Model {
   })
   id: string;
 
+  @Length({ min: 2 })
   @Column
   name: string;
 
   @Unique
+  @IsEmail
   @Column
   email: string;
 
+  @Length({ min: 4 })
   @Column
   password: string;
 
