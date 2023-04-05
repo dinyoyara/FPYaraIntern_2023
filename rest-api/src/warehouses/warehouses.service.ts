@@ -21,4 +21,13 @@ export class WarehousesService {
       customerId,
     });
   };
+
+  getAllByCustomerIdAsync = async (
+    customerId: string,
+  ): Promise<Warehouse[]> => {
+    return this.warehouseModel.findAll({
+      where: { customerId: customerId },
+      attributes: ['id', 'name', 'size', 'type'],
+    });
+  };
 }
