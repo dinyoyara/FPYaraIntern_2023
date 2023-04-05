@@ -5,9 +5,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { Customer } from '../../customers/customers.model';
+import { JWT_STRATEGY_NAME } from '../../constants';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, JWT_STRATEGY_NAME) {
   constructor(
     @InjectModel(Customer)
     private customerModel: typeof Customer,
