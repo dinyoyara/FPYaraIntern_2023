@@ -1,15 +1,19 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { JwtService } from '@nestjs/jwt';
 
-import { SigninDto, SignupDto } from './dto';
+import { SigninDto, SignupDto, TokenDto } from './dto';
 import { Customer } from 'src/customers/customers.model';
 import { hashPasswordAsync, verifyPasswordAsync } from './helpers';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Customer)
     private customerModel: typeof Customer,
+    private jwt: JwtService,
+    private config: ConfigService,
   ) {}
 
   async createCustomerAsync(dto: SignupDto): Promise<Customer> {
@@ -25,7 +29,7 @@ export class AuthService {
     return customer;
   }
 
-  async loginAsync(dto: SigninDto): Promise<string> {
+  async loginAsync(dto: SigninDto): Promise<TokenDto> {
     const customer = await this.customerModel.findOne({
       where: { email: dto.email },
     });
@@ -36,6 +40,20 @@ export class AuthService {
       customer.password,
     );
     if (!correctPassword) throw new ForbiddenException('Password incorrect');
-    return customer.dataValues.email;
+    return this.signTokenAsync(customer.id);
+  }
+
+  private async signTokenAsync(id: string): Promise<TokenDto> {
+    const payload = {
+      id: id,
+    };
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '120m',
+      secret: secret,
+    });
+
+    return { token: token };
   }
 }
