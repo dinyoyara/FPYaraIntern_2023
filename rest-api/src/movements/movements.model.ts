@@ -4,6 +4,7 @@ import {
   DataType,
   DeletedAt,
   ForeignKey,
+  Min,
   Model,
   PrimaryKey,
   Table,
@@ -20,10 +21,9 @@ export class Movement extends Model {
   })
   id: string;
 
-  @Column({
-    type: DataType.DOUBLE,
-  })
-  size: number;
+  @Min(1)
+  @Column
+  productCount: number;
 
   @Column
   date: Date;
