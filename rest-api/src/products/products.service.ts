@@ -20,4 +20,8 @@ export class ProductsService {
       attributes: ['id', 'name', 'size', 'type', 'price'],
     });
   };
+
+  getById = async (id: string): Promise<Product> => {
+    return this.productModel.findByPk(id);
+  };
 }
