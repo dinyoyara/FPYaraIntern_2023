@@ -1,13 +1,24 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Warehouse } from './warehouses.model';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
+
 import { CreateWarehouseDto } from './dto';
+import { Warehouse } from './warehouses.model';
+import { MathService } from 'src/math/math.service';
+import { MovementsService } from 'src/movements/movements.service';
 
 @Injectable()
 export class WarehousesService {
   constructor(
     @InjectModel(Warehouse)
     private warehouseModel: typeof Warehouse,
+    private mathService: MathService,
+    @Inject(forwardRef(() => MovementsService))
+    private movementsService: MovementsService,
   ) {}
 
   createAsync = async (
@@ -61,5 +72,22 @@ export class WarehousesService {
 
   getById = async (id: string): Promise<Warehouse> => {
     return this.warehouseModel.findByPk(id);
+  };
+
+  private getFreeSpace = async (id: string): Promise<number> => {
+    let expr = '';
+    const warehouse = await this.getById(id);
+    expr += warehouse.size;
+
+    const movements =
+      await this.movementsService.getAllMovementsByWarehouseIdAsync(id);
+
+    expr = movements.reduce((acc, x) => {
+      const operator = x.importedWarehouseId === id ? '-' : '+';
+      acc = acc + operator + '(' + x.productCount + '*' + x.product.size + ')';
+      return acc;
+    }, expr);
+
+    return this.mathService.calculateAsync(expr);
   };
 }
