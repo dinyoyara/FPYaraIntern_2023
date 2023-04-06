@@ -11,7 +11,7 @@ import {
 
 import { WarehousesService } from './warehouses.service';
 import { Warehouse } from './warehouses.model';
-import { CreateWarehouseDto } from './dto';
+import { CreateWarehouseDto, WarehouseInfoDto } from './dto';
 import { GetCustomer } from 'src/auth/decorators';
 import { JwtGuard } from 'src/auth/guards';
 
@@ -29,7 +29,7 @@ export class WarehousesController {
   }
 
   @Get()
-  getAll(@GetCustomer('id') customerId: string): Promise<Warehouse[]> {
+  getAll(@GetCustomer('id') customerId: string): Promise<WarehouseInfoDto[]> {
     return this.warehousesService.getAllByCustomerIdAsync(customerId);
   }
 

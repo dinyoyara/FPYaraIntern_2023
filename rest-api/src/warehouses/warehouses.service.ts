@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 
-import { CreateWarehouseDto } from './dto';
+import { CreateWarehouseDto, WarehouseInfoDto } from './dto';
 import { Warehouse } from './warehouses.model';
 import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
@@ -31,14 +31,19 @@ export class WarehousesService {
     });
   };
 
-  getAllByCustomerIdAsync = async (
-    customerId: string,
-  ): Promise<Warehouse[]> => {
-    return this.warehouseModel.findAll({
-      where: { customerId: customerId },
-      attributes: ['id', 'name', 'size', 'type'],
-    });
-  };
+  // getAllByCustomerIdAsync = async (
+  //   customerId: string,
+  // ): Promise<WarehouseInfoDto[]> => {
+  //   const warehouses = await this.warehouseModel.findAll({
+  //     where: { customerId: customerId },
+  //     attributes: ['id', 'name', 'size', 'type'],
+  //   });
+  //   const result: WarehouseInfoDto[] | [] = [];
+  //   warehouses.forEach(async (w) => {
+  //     const wi = await this.warehouseToInfoDtoAsync(w);
+  //     result.push(wi);
+  //   });
+  // };
 
   updateAsync = async (
     id: string,
@@ -89,5 +94,14 @@ export class WarehousesService {
     }, expr);
 
     return this.mathService.calculateAsync(expr);
+  };
+
+  private warehouseToInfoDtoAsync = async (
+    wh: Warehouse,
+  ): Promise<WarehouseInfoDto> => {
+    return {
+      ...wh.dataValues,
+      freeSpace: await this.getFreeSpace(wh.dataValues.id),
+    };
   };
 }
