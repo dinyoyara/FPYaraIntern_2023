@@ -1,6 +1,6 @@
-import { CreateWarehouseDto } from './warehouse.dto';
+import { WarehouseDto } from './warehouse.dto';
 
-export class WarehouseInfoDto extends CreateWarehouseDto {
+export class WarehouseInfoDto extends WarehouseDto {
   id: string;
   freeSpace: number;
 }

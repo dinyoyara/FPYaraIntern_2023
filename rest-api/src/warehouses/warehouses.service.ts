@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 
-import { CreateWarehouseDto, WarehouseInfoDto } from './dto';
+import { WarehouseDto, WarehouseInfoDto } from './dto';
 import { Warehouse } from './warehouses.model';
 import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
@@ -22,7 +22,7 @@ export class WarehousesService {
   ) {}
 
   createAsync = async (
-    dto: CreateWarehouseDto,
+    dto: WarehouseDto,
     customerId: string,
   ): Promise<Warehouse> => {
     return this.warehouseModel.create({
@@ -31,24 +31,24 @@ export class WarehousesService {
     });
   };
 
-  // getAllByCustomerIdAsync = async (
-  //   customerId: string,
-  // ): Promise<WarehouseInfoDto[]> => {
-  //   const warehouses = await this.warehouseModel.findAll({
-  //     where: { customerId: customerId },
-  //     attributes: ['id', 'name', 'size', 'type'],
-  //   });
-  //   const result: WarehouseInfoDto[] | [] = [];
-  //   warehouses.forEach(async (w) => {
-  //     const wi = await this.warehouseToInfoDtoAsync(w);
-  //     result.push(wi);
-  //   });
-  // };
+  getAllByCustomerIdAsync = async (
+    customerId: string,
+  ): Promise<WarehouseInfoDto[]> => {
+    const warehouses = await this.warehouseModel.findAll({
+      where: { customerId: customerId },
+      attributes: ['id', 'name', 'size', 'type'],
+    });
+    return await Promise.all(
+      warehouses.map(
+        async (w) => await this.warehouseToWarehouseInfoDtoAsync(w),
+      ),
+    );
+  };
 
   updateAsync = async (
     id: string,
     customerId: string,
-    dto: CreateWarehouseDto,
+    dto: WarehouseDto,
   ): Promise<Warehouse> => {
     const warehouse = await this.warehouseModel.findByPk(id);
     if (warehouse.customerId != customerId) {
@@ -88,20 +88,20 @@ export class WarehousesService {
       await this.movementsService.getAllMovementsByWarehouseIdAsync(id);
 
     expr = movements.reduce((acc, x) => {
-      const operator = x.importedWarehouseId === id ? '-' : '+';
-      acc = acc + operator + '(' + x.productCount + '*' + x.product.size + ')';
+      const sign = x.importedWarehouseId === id ? '-' : '+';
+      acc = acc + sign + '(' + x.productCount + '*' + x.product.size + ')';
       return acc;
     }, expr);
 
     return this.mathService.calculateAsync(expr);
   };
 
-  private warehouseToInfoDtoAsync = async (
-    wh: Warehouse,
+  private warehouseToWarehouseInfoDtoAsync = async (
+    warehouse: Warehouse,
   ): Promise<WarehouseInfoDto> => {
     return {
-      ...wh.dataValues,
-      freeSpace: await this.getFreeSpace(wh.dataValues.id),
+      ...warehouse.dataValues,
+      freeSpace: await this.getFreeSpace(warehouse.dataValues.id),
     };
   };
 }

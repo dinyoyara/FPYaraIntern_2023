@@ -11,7 +11,7 @@ import {
 
 import { WarehousesService } from './warehouses.service';
 import { Warehouse } from './warehouses.model';
-import { CreateWarehouseDto, WarehouseInfoDto } from './dto';
+import { WarehouseDto, WarehouseInfoDto } from './dto';
 import { GetCustomer } from 'src/auth/decorators';
 import { JwtGuard } from 'src/auth/guards';
 
@@ -22,7 +22,7 @@ export class WarehousesController {
 
   @Post()
   create(
-    @Body() dto: CreateWarehouseDto,
+    @Body() dto: WarehouseDto,
     @GetCustomer('id') customerId: string,
   ): Promise<Warehouse> {
     return this.warehousesService.createAsync(dto, customerId);
@@ -35,7 +35,7 @@ export class WarehousesController {
 
   @Put(':id')
   update(
-    @Body() dto: CreateWarehouseDto,
+    @Body() dto: WarehouseDto,
     @Param('id') id: string,
     @GetCustomer('id') customerId: string,
   ): Promise<Warehouse> {

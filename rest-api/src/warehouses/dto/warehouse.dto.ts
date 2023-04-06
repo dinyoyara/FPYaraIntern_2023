@@ -1,4 +1,4 @@
-export class CreateWarehouseDto {
+export class WarehouseDto {
   name: string;
   size: number;
   type?: string;
