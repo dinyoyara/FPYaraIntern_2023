@@ -39,11 +39,7 @@ export class WarehousesService {
       throw new ForbiddenException('not authorized');
     }
     await this.warehouseModel.update(
-      {
-        name: dto.name,
-        size: dto.size,
-        type: dto.type,
-      },
+      { ...dto },
       {
         where: { id: id },
       },
