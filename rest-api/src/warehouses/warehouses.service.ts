@@ -62,4 +62,8 @@ export class WarehousesService {
     warehouse.destroy();
     return warehouse;
   };
+
+  getById = async (id: string): Promise<Warehouse> => {
+    return this.warehouseModel.findByPk(id);
+  };
 }

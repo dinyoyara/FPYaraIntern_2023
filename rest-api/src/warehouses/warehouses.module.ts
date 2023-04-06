@@ -9,5 +9,6 @@ import { WarehousesController } from './warehouses.controller';
   imports: [SequelizeModule.forFeature([Warehouse])],
   controllers: [WarehousesController],
   providers: [WarehousesService],
+  exports: [WarehousesService],
 })
 export class WarehousesModule {}
