@@ -20,7 +20,9 @@ export class Movement extends Model {
   })
   id: string;
 
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+  })
   size: number;
 
   @Column

@@ -35,7 +35,9 @@ export class Warehouse extends Model {
   name: string;
 
   @Min(WAREHOUSE_MIN_SIZE)
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+  })
   size: number;
 
   @Column({

@@ -9,6 +9,7 @@ import {
   Min,
   AllowNull,
   Length,
+  Unique,
 } from 'sequelize-typescript';
 
 import {
@@ -28,6 +29,7 @@ export class Product extends Model {
   })
   id: string;
 
+  @Unique
   @Length({ min: 3 })
   @Column
   name: string;
@@ -39,7 +41,9 @@ export class Product extends Model {
   price: number;
 
   @Min(PRODUCT_MIN_SIZE)
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+  })
   size: number;
 
   @AllowNull(false)
