@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 
 import { MovementDto } from './dto';
 import { Movement } from './movements.model';
@@ -29,14 +30,50 @@ export class MovementsService {
     if (!isOwner) {
       throw new ForbiddenException('not authorized');
     }
-    const correctProductType = await this.correctProductType(
-      productId,
+
+    const product = await this.productService.getById(productId);
+    const importedWarehouse = await this.warehouseService.getById(
       importedWarehouseId,
     );
-    if (!correctProductType) {
+    const correctType =
+      importedWarehouse.type === UNKNOWN ||
+      product.type === importedWarehouse.type;
+
+    if (!correctType) {
       throw new ForbiddenException('wrong product type');
     }
-    return this.movementModel.create({ ...dto });
+
+    const movement = await this.movementModel.create({ ...dto });
+
+    if (importedWarehouse.type === UNKNOWN) {
+      await this.warehouseService.updateAsync(importedWarehouseId, customerId, {
+        name: importedWarehouse.name,
+        size: importedWarehouse.size,
+        type: product.type,
+      });
+    }
+
+    return movement;
+  };
+
+  getAllMovementsByWarehouseId = async (
+    warehouseId: string,
+  ): Promise<Movement[]> => {
+    return this.movementModel.findAll({
+      where: {
+        [Op.or]: [
+          { importedWarehouseId: warehouseId },
+          { exportedWarehouseId: warehouseId },
+        ],
+      },
+      attributes: [
+        'productId',
+        'productCount',
+        'importedWarehouseId',
+        'exportedWarehouseId',
+        'date',
+      ],
+    });
   };
 
   private customerIsOwner = async (
@@ -53,14 +90,5 @@ export class MovementsService {
       customerWarehouses.some((x) => x.id === importWarehouseId) &&
       customerWarehouses.some((x) => x.id === exportWarehouseId)
     );
-  };
-
-  private correctProductType = async (
-    productId: string,
-    importedWarehouseId: string,
-  ): Promise<boolean> => {
-    const product = await this.productService.getById(productId);
-    const warehouse = await this.warehouseService.getById(importedWarehouseId);
-    return warehouse.type === UNKNOWN || product.type === warehouse.type;
   };
 }

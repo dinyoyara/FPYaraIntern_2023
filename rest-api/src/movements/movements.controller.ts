@@ -1,5 +1,5 @@
 import { JwtGuard } from 'src/auth/guards';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
 import { MovementsService } from './movements.service';
 import { MovementDto } from './dto';
@@ -17,5 +17,10 @@ export class MovementsController {
     @GetCustomer('id') customerId: string,
   ): Promise<Movement> {
     return this.movementService.createMovement(dto, customerId);
+  }
+
+  @Get('warehouse/:id')
+  getAllByWarehouse(@Param('id') id: string): Promise<Movement[]> {
+    return this.movementService.getAllMovementsByWarehouseId(id);
   }
 }
