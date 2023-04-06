@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 
@@ -7,12 +12,14 @@ import { Movement } from './movements.model';
 import { ProductsService } from 'src/products/products.service';
 import { WarehousesService } from 'src/warehouses/warehouses.service';
 import { UNKNOWN } from '../constants';
+import { Product } from 'src/products/products.model';
 
 @Injectable()
 export class MovementsService {
   constructor(
     @InjectModel(Movement)
     private movementModel: typeof Movement,
+    @Inject(forwardRef(() => WarehousesService))
     private warehouseService: WarehousesService,
     private productService: ProductsService,
   ) {}
@@ -56,7 +63,7 @@ export class MovementsService {
     return movement;
   };
 
-  getAllMovementsByWarehouseId = async (
+  getAllMovementsByWarehouseIdAsync = async (
     warehouseId: string,
   ): Promise<Movement[]> => {
     return this.movementModel.findAll({
@@ -72,6 +79,12 @@ export class MovementsService {
         'importedWarehouseId',
         'exportedWarehouseId',
         'date',
+      ],
+      include: [
+        {
+          model: Product,
+          attributes: ['size'],
+        },
       ],
     });
   };

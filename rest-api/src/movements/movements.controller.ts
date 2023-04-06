@@ -21,6 +21,6 @@ export class MovementsController {
 
   @Get('warehouse/:id')
   getAllByWarehouse(@Param('id') id: string): Promise<Movement[]> {
-    return this.movementService.getAllMovementsByWarehouseId(id);
+    return this.movementService.getAllMovementsByWarehouseIdAsync(id);
   }
 }
