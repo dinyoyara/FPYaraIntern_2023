@@ -18,9 +18,8 @@ export class AuthService {
 
   createCustomerAsync = async (dto: SignupDto): Promise<Customer> => {
     const customer = await this.customerModel.create({
-      name: dto.name,
+      ...dto,
       password: await hashPasswordAsync(dto.password),
-      email: dto.email,
     });
 
     delete customer.dataValues.password;

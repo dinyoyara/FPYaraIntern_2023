@@ -15,9 +15,7 @@ export class WarehousesService {
     customerId: string,
   ): Promise<Warehouse> => {
     return this.warehouseModel.create({
-      name: dto.name,
-      size: dto.size,
-      type: dto.type,
+      ...dto,
       customerId,
     });
   };

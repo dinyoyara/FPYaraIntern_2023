@@ -12,12 +12,7 @@ export class ProductsService {
   ) {}
 
   createAsync = async (dto: ProductDto): Promise<Product> => {
-    return this.productModel.create({
-      name: dto.name,
-      price: dto.price,
-      size: dto.size,
-      type: dto.type,
-    });
+    return this.productModel.create({ ...dto });
   };
 
   getAllAsync = async (): Promise<Product[]> => {
