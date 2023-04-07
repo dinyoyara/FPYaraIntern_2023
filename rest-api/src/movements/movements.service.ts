@@ -83,7 +83,7 @@ export class MovementsService {
       include: [
         {
           model: Product,
-          attributes: ['size'],
+          attributes: ['name', 'size', 'price'],
         },
       ],
     });
