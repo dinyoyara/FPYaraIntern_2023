@@ -1,0 +1,34 @@
+{
+    "endOfLine": "auto",
+    "semi": true,
+    "trailingComma": "none",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "jsxSingleQuote": true,
+    "jsxBracketSameLine": false,
+    "quoteProps": "as-needed",
+    "overrides": [
+        {
+            "files": "*.js",
+            "options": {
+                "parser": "babel"
+            }
+        },
+        {
+            "files": "*.ts",
+            "options": {
+                "parser": "typescript"
+            }
+        },
+        {
+            "files": "*.json",
+            "options": {
+                "parser": "json"
+            }
+        }
+    ]
+}
