@@ -10,6 +10,7 @@ import { WarehouseDto, WarehouseInfoDto } from './dto';
 import { Warehouse } from './warehouses.model';
 import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
+import { ProductInfoModel, ProductWithExprMode } from '../products/models';
 
 @Injectable()
 export class WarehousesService {
@@ -79,6 +80,35 @@ export class WarehousesService {
     return this.warehouseModel.findByPk(id);
   };
 
+  getWarehouseProducts = async (id: string): Promise<ProductInfoModel[]> => {
+    const movements =
+      await this.movementsService.getAllMovementsByWarehouseIdAsync(id);
+    const productExprList: ProductWithExprMode[] = movements.reduce(
+      (acc, m) => {
+        let product = acc.find((x) => x.id === m.productId);
+        if (!product) {
+          product = {
+            id: m.productId,
+            expr: '0',
+            name: m.product.name,
+            size: m.product.size,
+            price: m.product.price,
+          };
+          acc.push(product);
+        }
+        const sign = m.importedWarehouseId === id ? '+' : '-';
+        product.expr = product.expr + sign + '(' + m.productCount + ')';
+
+        return acc;
+      },
+      [],
+    );
+
+    return await Promise.all(
+      productExprList.map(async (pr) => await this.calculateProductCount(pr)),
+    );
+  };
+
   private getFreeSpace = async (id: string): Promise<number> => {
     let expr = '';
     const warehouse = await this.getById(id);
@@ -89,9 +119,11 @@ export class WarehousesService {
 
     expr = movements.reduce((acc, x) => {
       const sign = x.importedWarehouseId === id ? '-' : '+';
-      acc = acc + sign + '(' + x.productCount + '*' + x.product.size + ')';
+      acc = acc + sign + '(' + x.product.size + '*' + x.productCount + ')';
       return acc;
     }, expr);
+
+    console.log(expr);
 
     return this.mathService.calculateAsync(expr);
   };
@@ -102,6 +134,17 @@ export class WarehousesService {
     return {
       ...warehouse.dataValues,
       freeSpace: await this.getFreeSpace(warehouse.dataValues.id),
+    };
+  };
+
+  private calculateProductCount = async (
+    productDto: ProductWithExprMode,
+  ): Promise<ProductInfoModel> => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { expr, ...product } = productDto;
+    return {
+      ...product,
+      count: await this.mathService.calculateAsync(productDto.expr),
     };
   };
 }

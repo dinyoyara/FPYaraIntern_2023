@@ -9,11 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { WarehousesService } from './warehouses.service';
+import { JwtGuard } from '../auth/guards';
 import { Warehouse } from './warehouses.model';
+import { GetCustomer } from '../auth/decorators';
+import { ProductInfoModel } from '../products/models';
 import { WarehouseDto, WarehouseInfoDto } from './dto';
-import { GetCustomer } from 'src/auth/decorators';
-import { JwtGuard } from 'src/auth/guards';
+import { WarehousesService } from './warehouses.service';
 
 @UseGuards(JwtGuard)
 @Controller('warehouses')
@@ -48,5 +49,10 @@ export class WarehousesController {
     @GetCustomer('id') customerId: string,
   ): Promise<Warehouse> {
     return this.warehousesService.deleteByIdAsync(id, customerId);
+  }
+
+  @Get(':id')
+  getOneWithProducts(@Param('id') id: string): Promise<ProductInfoModel[]> {
+    return this.warehousesService.getWarehouseProducts(id);
   }
 }
