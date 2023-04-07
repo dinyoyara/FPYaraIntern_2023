@@ -123,8 +123,6 @@ export class WarehousesService {
       return acc;
     }, expr);
 
-    console.log(expr);
-
     return this.mathService.calculateAsync(expr);
   };
 
