@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import StyledLoginForm from './styles.css';
+import { StyledTitle, StyledError } from '../styles.css';
+import { formInputHeight } from '../../../../styles/const';
 import InputContainer from '../../../shared/Input';
 import Button from '../../../shared/Button';
-import { formINputHeight } from '../../../../styles/const';
-import { StyledTitle } from '../styles.css';
+import useCustomerContext from '../../../../context/auth/hook';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [formIsValid, setFormIsValid] = useState(false);
+    const [formIsValid, setFormIsValid] = useState(true);
     //const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '' });
 
-    const submitHandler = () => {
-        console.log('signin');
+    const { signin, customer } = useCustomerContext();
+    const { operationError, token } = customer;
+
+    const submitHandler = async () => {
+        await signin(email, password);
     };
+
+    useEffect(() => {
+        if (token) console.log(token);
+    }, [token]);
 
     return (
         <StyledLoginForm>
             <StyledTitle>Signin</StyledTitle>
+            {operationError ? <StyledError>{operationError}</StyledError> : null}
             <InputContainer
-                height={formINputHeight}
+                height={formInputHeight}
                 type='email'
                 id='email'
                 label='Email:'
@@ -34,7 +43,7 @@ const LoginForm = () => {
                 }}
             />
             <InputContainer
-                height={formINputHeight}
+                height={formInputHeight}
                 type='password'
                 id='password'
                 label='Password:'

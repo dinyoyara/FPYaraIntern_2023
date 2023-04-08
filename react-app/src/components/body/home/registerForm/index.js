@@ -4,7 +4,7 @@ import StyledLoginForm from './styles.css';
 import { StyledTitle } from '../styles.css';
 import InputContainer from '../../../shared/Input';
 import Button from '../../../shared/Button';
-import { formINputHeight } from '../../../../styles/const';
+import { formInputHeight } from '../../../../styles/const';
 
 const RegisterForm = () => {
     const [name, setName] = useState('');
@@ -15,14 +15,14 @@ const RegisterForm = () => {
     //const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '', name: '' });
 
     const submitHandler = () => {
-        console.log('signin');
+        console.log('signup');
     };
 
     return (
         <StyledLoginForm>
             <StyledTitle>Signup</StyledTitle>
             <InputContainer
-                height={formINputHeight}
+                height={formInputHeight}
                 type='name'
                 id='name'
                 label='Name:'
@@ -35,7 +35,7 @@ const RegisterForm = () => {
                 }}
             />
             <InputContainer
-                height={formINputHeight}
+                height={formInputHeight}
                 type='email'
                 id='email'
                 label='Email:'
@@ -48,7 +48,7 @@ const RegisterForm = () => {
                 }}
             />
             <InputContainer
-                height={formINputHeight}
+                height={formInputHeight}
                 type='password'
                 id='password'
                 label='Password:'

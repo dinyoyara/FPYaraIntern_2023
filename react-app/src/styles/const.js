@@ -1,3 +1,3 @@
-const formINputHeight = '70px';
+const formInputHeight = '70px';
 
-export { formINputHeight };
+export { formInputHeight };
