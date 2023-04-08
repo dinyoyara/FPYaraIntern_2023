@@ -5,7 +5,7 @@ import { StyledTitle, StyledError } from '../styles.css';
 import { formInputHeight } from '../../../../styles/const';
 import InputContainer from '../../../shared/Input';
 import Button from '../../../shared/Button';
-import useCustomerContext from '../../../../context/auth/hook';
+import useCustomerContext from '../../../../context/customer/hook';
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');

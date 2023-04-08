@@ -1,4 +1,4 @@
-import CustomerProvider from './auth';
+import CustomerProvider from './customer';
 
 const ContextProvider = ({ children }) => {
     return <CustomerProvider>{children}</CustomerProvider>;
