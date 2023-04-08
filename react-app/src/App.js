@@ -2,12 +2,15 @@ import { BrowserRouter } from 'react-router-dom';
 
 import GlobalStyle from './styles/global.css';
 import Body from './components/body';
+import ContextProvider from './context';
 
 function App() {
     return (
         <BrowserRouter>
             <GlobalStyle />
-            <Body />
+            <ContextProvider>
+                <Body />
+            </ContextProvider>
         </BrowserRouter>
     );
 }
