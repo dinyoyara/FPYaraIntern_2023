@@ -1,26 +1,37 @@
 import React, { useState } from 'react';
 
 import StyledLoginForm from './styles.css';
-import { StyledTitle } from '../styles.css';
+import { StyledTitle, StyledError } from '../styles.css';
 import InputContainer from '../../../shared/Input';
 import Button from '../../../shared/Button';
 import { formInputHeight } from '../../../../styles/const';
+import useCustomerContext from '../../../../context/customer/hook';
 
-const RegisterForm = () => {
+const RegisterForm = ({ goToLogin }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const [formIsValid, setFormIsValid] = useState(false);
+    const [formIsValid, setFormIsValid] = useState(true);
     //const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '', name: '' });
 
-    const submitHandler = () => {
-        console.log('signup');
+    const { signupAsync, error, clearError } = useCustomerContext();
+
+    const submitHandler = async () => {
+        const isSuccessful = await signupAsync(name, email, password);
+        goToLogin(isSuccessful);
+    };
+
+    const handleOnChange = (event, setter, fieldName) => {
+        setter(event.target.value);
+        clearError();
+        // validateField(fieldName, event.target.value);
     };
 
     return (
         <StyledLoginForm>
             <StyledTitle>Signup</StyledTitle>
+            {error ? <StyledError>{error}</StyledError> : null}
             <InputContainer
                 height={formInputHeight}
                 type='name'
@@ -28,11 +39,7 @@ const RegisterForm = () => {
                 label='Name:'
                 placeholder='Enter your name here'
                 value={name}
-                onChange={(e) => {
-                    e.persist();
-                    setName(e.target.value);
-                    // validateField('firstName', e.target.value);
-                }}
+                onChange={(e) => handleOnChange(e, setName, 'name')}
             />
             <InputContainer
                 height={formInputHeight}
@@ -41,11 +48,7 @@ const RegisterForm = () => {
                 label='Email:'
                 placeholder='Enter your email here'
                 value={email}
-                onChange={(e) => {
-                    e.persist();
-                    setEmail(e.target.value);
-                    // validateField('firstName', e.target.value);
-                }}
+                onChange={(e) => handleOnChange(e, setEmail, 'email')}
             />
             <InputContainer
                 height={formInputHeight}
@@ -54,11 +57,7 @@ const RegisterForm = () => {
                 label='Password:'
                 placeholder='Enter your password here'
                 value={password}
-                onChange={(e) => {
-                    e.persist();
-                    setPassword(e.target.value);
-                    // validateField('firstName', e.target.value);
-                }}
+                onChange={(e) => handleOnChange(e, setPassword, 'password')}
             />{' '}
             <Button type='button' text='Signup' handleClick={submitHandler} active={formIsValid} />
         </StyledLoginForm>

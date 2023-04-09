@@ -14,10 +14,16 @@ const LoginForm = () => {
     const [formIsValid, setFormIsValid] = useState(true);
     //const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '' });
 
-    const { signin, customer, error } = useCustomerContext();
+    const { signinAsync, clearError, error } = useCustomerContext();
 
     const submitHandler = async () => {
-        await signin(email, password);
+        await signinAsync(email, password);
+    };
+
+    const handleOnChange = (event, setter, fieldName) => {
+        setter(event.target.value);
+        clearError();
+        // validateField(fieldName, event.target.value);
     };
 
     return (
@@ -31,11 +37,7 @@ const LoginForm = () => {
                 label='Email:'
                 placeholder='Enter your email here'
                 value={email}
-                onChange={(e) => {
-                    e.persist();
-                    setEmail(e.target.value);
-                    // validateField('firstName', e.target.value);
-                }}
+                onChange={(e) => handleOnChange(e, setEmail, 'email')}
             />
             <InputContainer
                 height={formInputHeight}
@@ -44,11 +46,7 @@ const LoginForm = () => {
                 label='Password:'
                 placeholder='Enter your password here'
                 value={password}
-                onChange={(e) => {
-                    e.persist();
-                    setPassword(e.target.value);
-                    // validateField('firstName', e.target.value);
-                }}
+                onChange={(e) => handleOnChange(e, setPassword, 'password')}
             />{' '}
             <Button type='button' text='Signin' handleClick={submitHandler} active={formIsValid} />
         </StyledLoginForm>
