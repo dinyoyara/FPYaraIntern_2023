@@ -39,12 +39,18 @@ export class AuthService {
       customer.password,
     );
     if (!correctPassword) throw new ForbiddenException('Password incorrect');
-    return this.signTokenAsync(customer.id);
+    return this.signTokenAsync(customer.id, customer.email, customer.name);
   };
 
-  private signTokenAsync = async (id: string): Promise<TokenDto> => {
+  private signTokenAsync = async (
+    id: string,
+    email: string,
+    name: string,
+  ): Promise<TokenDto> => {
     const payload = {
-      id: id,
+      id,
+      email,
+      name,
     };
     const secret = this.config.get('JWT_SECRET');
 
