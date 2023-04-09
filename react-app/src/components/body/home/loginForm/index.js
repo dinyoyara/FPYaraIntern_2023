@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import StyledLoginForm from './styles.css';
 import { StyledTitle, StyledError } from '../styles.css';
@@ -14,21 +14,16 @@ const LoginForm = () => {
     const [formIsValid, setFormIsValid] = useState(true);
     //const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '' });
 
-    const { signin, customer } = useCustomerContext();
-    const { operationError, token } = customer;
+    const { signin, customer, error } = useCustomerContext();
 
     const submitHandler = async () => {
         await signin(email, password);
     };
 
-    useEffect(() => {
-        if (token) console.log(token);
-    }, [token]);
-
     return (
         <StyledLoginForm>
             <StyledTitle>Signin</StyledTitle>
-            {operationError ? <StyledError>{operationError}</StyledError> : null}
+            {error ? <StyledError>{error}</StyledError> : null}
             <InputContainer
                 height={formInputHeight}
                 type='email'
