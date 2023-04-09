@@ -14,7 +14,7 @@ const StyledLink = styled('div')`
     cursor: pointer;
 `;
 const StyledGreeting = styled('div')`
-    padding: 30px;
+    padding-top: 30px;
     width: 100%;
     font-size: 40px;
     text-align: center;
