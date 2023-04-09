@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 
@@ -17,15 +21,19 @@ export class AuthService {
   ) {}
 
   createCustomerAsync = async (dto: SignupDto): Promise<Customer> => {
-    const customer = await this.customerModel.create({
-      ...dto,
-      password: await hashPasswordAsync(dto.password),
-    });
+    try {
+      const customer = await this.customerModel.create({
+        ...dto,
+        password: await hashPasswordAsync(dto.password),
+      });
 
-    delete customer.dataValues.password;
-    delete customer.dataValues.deletedAt;
-    delete customer.dataValues.updatedAt;
-    return customer;
+      delete customer.dataValues.password;
+      delete customer.dataValues.deletedAt;
+      delete customer.dataValues.updatedAt;
+      return customer;
+    } catch (error) {
+      throw new ConflictException(error.errors[0].message);
+    }
   };
 
   loginAsync = async (dto: SigninDto): Promise<TokenDto> => {
