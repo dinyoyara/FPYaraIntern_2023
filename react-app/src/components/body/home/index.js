@@ -3,7 +3,7 @@ import { useState } from 'react';
 import LoginForm from './loginForm';
 import RegisterForm from './registerForm';
 import useCustomerContext from '../../../context/customer/hook';
-import { StyledLink } from './styles.css';
+import { StyledLink, StyledGreeting } from './styles.css';
 
 const Home = () => {
     const [showLogin, setShowLogin] = useState(true);
@@ -17,7 +17,7 @@ const Home = () => {
     return (
         <>
             {customer ? (
-                <div>Welcome, {customer.name}</div>
+                <StyledGreeting>Welcome, {customer.name}</StyledGreeting>
             ) : (
                 <>
                     {form}

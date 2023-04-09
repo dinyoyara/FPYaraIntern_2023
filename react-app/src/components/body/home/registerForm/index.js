@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 import StyledLoginForm from './styles.css';
-import { StyledTitle, StyledError } from '../styles.css';
+import { StyledError } from '../styles.css';
+import { StyledTitle } from '../../../styles.css';
 import InputContainer from '../../../shared/Input';
 import Button from '../../../shared/Button';
 import { formInputHeight } from '../../../../styles/const';

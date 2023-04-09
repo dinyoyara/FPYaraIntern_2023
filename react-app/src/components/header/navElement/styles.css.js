@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 const StyledNavElement = styled('div')`
-    margin-left: 20px;
+    margin-left: ${(p) => p.marginLeft};
+    margin-right: ${(p) => p.marginRight};
     cursor: pointer;
 `;
 
