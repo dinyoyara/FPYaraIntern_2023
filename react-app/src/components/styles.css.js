@@ -11,5 +11,12 @@ const StyledError = styled('div')`
     text-align: center;
     color: red;
 `;
-
-export { StyledTitle, StyledError };
+const StyledLink = styled('div')`
+    margin-bottom: 30px;
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    color: blue;
+    cursor: pointer;
+`;
+export { StyledTitle, StyledError, StyledLink };
