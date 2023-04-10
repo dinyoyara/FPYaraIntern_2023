@@ -4,7 +4,7 @@ import StyledProductsScreen from './styles.css';
 import { formInputHeight } from '../../../styles/const';
 import { HAZARDOUS, NON_HAZARDOUS, EMPTY_STRING, PRODUCT_MIN_PRICE, PRODUCT_MIN_SIZE } from '../../../constants';
 import Form from '../../shared/Form';
-import useProductContext from '../../../context/customer/hook';
+import useProductContext from '../../../context/product/hook';
 import { StyledError, StyledLink } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
 import { StyledDataPart } from '../styles.css';
@@ -103,7 +103,8 @@ const Products = () => {
     };
 
     const getDataLabels = () => {
-        return Object.keys(products[0]);
+        const { id, ...props } = products[0];
+        return Object.keys(props);
     };
 
     return (
