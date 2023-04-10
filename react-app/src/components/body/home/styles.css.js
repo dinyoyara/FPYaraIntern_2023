@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 
-const StyledError = styled('div')`
-    width: 100%;
-    font-size: 14px;
-    text-align: center;
-    color: red;
-`;
+
 const StyledLink = styled('div')`
     width: 100%;
     font-size: 14px;
@@ -20,4 +15,4 @@ const StyledGreeting = styled('div')`
     text-align: center;
 `;
 
-export { StyledError, StyledLink, StyledGreeting };
+export {  StyledLink, StyledGreeting };

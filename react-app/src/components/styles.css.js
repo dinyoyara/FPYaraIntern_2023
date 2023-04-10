@@ -5,5 +5,11 @@ const StyledTitle = styled('div')`
     font-size: 20px;
     text-align: center;
 `;
+const StyledError = styled('div')`
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    color: red;
+`;
 
-export { StyledTitle };
+export { StyledTitle, StyledError };
