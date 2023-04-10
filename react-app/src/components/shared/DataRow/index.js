@@ -1,21 +1,23 @@
 import StyledDataRow, { StyledData, StyledAction } from './styles.css';
 
-const DataRow = ({ data, actions, ...styleProps }) => {
+const DataRow = ({ data, actions, width }) => {
     const { id, ...restData } = data;
     return (
-        <StyledDataRow {...styleProps}>
+        <StyledDataRow>
             {Object.values(restData).map((x, i) => (
-                <StyledData key={i}>{x}</StyledData>
+                <StyledData key={i} width={width}>
+                    {x}
+                </StyledData>
             ))}
-            <StyledData>
-                {actions
-                    ? actions.map((x) => (
-                          <StyledAction key={x.name} onClick={() => x.onClick(id)}>
-                              {x.name}
-                          </StyledAction>
-                      ))
-                    : 'actions'}
-            </StyledData>
+            {actions ? (
+                <StyledData width={width}>
+                    {actions.map((x) => (
+                        <StyledAction key={x.name} onClick={() => x.onClick(id)}>
+                            {x.name}
+                        </StyledAction>
+                    ))}
+                </StyledData>
+            ) : null}
         </StyledDataRow>
     );
 };

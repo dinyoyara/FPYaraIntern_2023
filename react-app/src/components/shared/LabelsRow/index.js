@@ -1,12 +1,14 @@
 import StyledLabelsRow, { StyledLabel } from './styles.css';
 
-const LabelsRow = ({ data, hasActions, ...styleProps }) => {
+const LabelsRow = ({ data, hasActions, width }) => {
     return (
-        <StyledLabelsRow {...styleProps}>
+        <StyledLabelsRow>
             {data.map((x, i) => (
-                <StyledLabel key={i}>{x}</StyledLabel>
+                <StyledLabel key={i} width={width}>
+                    {x}
+                </StyledLabel>
             ))}
-            {hasActions ? <StyledLabel>action</StyledLabel> : null}
+            {hasActions ? <StyledLabel width={width}>action</StyledLabel> : null}
         </StyledLabelsRow>
     );
 };

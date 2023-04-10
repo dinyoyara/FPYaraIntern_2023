@@ -13,7 +13,7 @@ const StyledLabelsRow = styled('div')`
 `;
 
 const StyledLabel = styled('div')`
-    width: 20%;
+    width: ${(p) => p.width};
     height: 100%;
     text-align: center;
     display: flex;

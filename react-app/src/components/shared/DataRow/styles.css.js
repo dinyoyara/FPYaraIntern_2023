@@ -11,7 +11,7 @@ const StyledDataRow = styled('div')`
 `;
 
 const StyledData = styled('div')`
-    width: 20%;
+    width: ${(p) => p.width};
     height: 100%;
     text-align: center;
     display: flex;

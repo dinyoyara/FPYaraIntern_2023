@@ -7,9 +7,9 @@ const DataContainer = ({ labelData, data, title, actions }) => {
     return (
         <StyledDataContainer>
             <StyledTitle>{title}</StyledTitle>
-            <LabelsRow data={labelData} hasActions={actions} />
+            <LabelsRow data={labelData} hasActions={actions} width={`${100 / labelData.length}%`} />
             {data.map((x) => (
-                <DataRow key={x.id} data={x} actions={actions} />
+                <DataRow key={x.id} data={x} actions={actions} width={`${100 / labelData.length}%`} />
             ))}
         </StyledDataContainer>
     );
