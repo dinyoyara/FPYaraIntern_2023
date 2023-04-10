@@ -10,7 +10,7 @@ function ProductProvider({ children }) {
 
     const createProductAsync = async (name, price, size, type) => {
         try {
-            await axiosClient.post(`/products`, { name, price, type, size });
+            await axiosClient.post(`/products`, { name, price, size, type });
             await getAllAsync();
             return true;
         } catch (error) {
