@@ -4,6 +4,7 @@ import StyledWarehouseScreen from './styles.css';
 import Form from '../../shared/Form';
 import { formInputHeight } from '../../../styles/const';
 import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../../../constants';
+import useWarehouseContext from '../../../context/warehouse/hook';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState();
@@ -12,8 +13,10 @@ const Warehouses = () => {
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const handleSubmit = () => {
-        console.log(inputName, inputSize, selectType);
+    const { error, createWarehouseAsync } = useWarehouseContext();
+
+    const handleSubmit = async () => {
+        await createWarehouseAsync(inputName, inputSize, selectType);
     };
 
     const createWarehouseFormInputs = [
