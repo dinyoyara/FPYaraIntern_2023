@@ -25,6 +25,7 @@ const Form = ({ selectsInfo, inputsInfo, buttonInfo, title, error }) => {
             {selectsInfo
                 ? selectsInfo.map((select) => (
                       <SelectContainer
+                          key={select.id}
                           id={select.id}
                           defaultValue={select.defaultValue}
                           label={select.label}
