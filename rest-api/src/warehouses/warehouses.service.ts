@@ -58,17 +58,21 @@ export class WarehousesService {
     customerId: string,
     dto: WarehouseDto,
   ): Promise<Warehouse> => {
-    const warehouse = await this.warehouseModel.findByPk(id);
-    if (warehouse.customerId != customerId) {
-      throw new ForbiddenException('not authorized');
+    try {
+      const warehouse = await this.warehouseModel.findByPk(id);
+      if (warehouse.customerId != customerId) {
+        throw new ForbiddenException('not authorized');
+      }
+      await this.warehouseModel.update(
+        { ...dto },
+        {
+          where: { id: id },
+        },
+      );
+      return this.warehouseModel.findByPk(id);
+    } catch (error) {
+      throw new BadRequestException(error.errors[0].message);
     }
-    await this.warehouseModel.update(
-      { ...dto },
-      {
-        where: { id: id },
-      },
-    );
-    return this.warehouseModel.findByPk(id);
   };
 
   deleteByIdAsync = async (
