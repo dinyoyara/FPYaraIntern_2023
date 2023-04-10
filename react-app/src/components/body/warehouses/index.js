@@ -153,7 +153,7 @@ const Warehouses = () => {
                 <DataContainer
                     labelData={getDataLabels()}
                     data={warehouses}
-                    dataButtons={getDataActions()}
+                    actions={getDataActions()}
                     title='Warehouses'
                 />
             ) : null}
