@@ -6,6 +6,7 @@ import DataContainer from '../../shared/DataContainer';
 import { formInputHeight } from '../../../styles/const';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
+import { StyledDataPart } from '../styles.css';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
@@ -130,7 +131,8 @@ const Warehouses = () => {
     };
 
     const getDataLabels = () => {
-        return { name: 'name', type: 'type', size: 'size', freeSpace: 'free space' };
+        const { id, ...props } = warehouses[0];
+        return Object.keys(props);
     };
 
     const getDataActions = () => {
@@ -149,14 +151,16 @@ const Warehouses = () => {
                 title={edit ? 'Edit Warehouse' : 'Create Warehouse'}
                 error={error}
             />
-            {warehouses ? (
-                <DataContainer
-                    labelData={getDataLabels()}
-                    data={warehouses}
-                    actions={getDataActions()}
-                    title='Warehouses'
-                />
-            ) : null}
+            <StyledDataPart>
+                {warehouses ? (
+                    <DataContainer
+                        labelData={getDataLabels()}
+                        data={warehouses}
+                        actions={getDataActions()}
+                        title='Warehouses'
+                    />
+                ) : null}
+            </StyledDataPart>
         </StyledWarehouseScreen>
     );
 };
