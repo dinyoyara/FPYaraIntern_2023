@@ -1,13 +1,14 @@
 import StyledForm from './styles.css';
-import { StyledTitle } from '../../styles.css';
+import { StyledTitle, StyledError } from '../../styles.css';
 import InputContainer from '../Input';
 import SelectContainer from '../Select';
 import Button from '../Button';
 
-const Form = ({ selectsInfo, inputsInfo, buttonInfo, title }) => {
+const Form = ({ selectsInfo, inputsInfo, buttonInfo, title, error }) => {
     return (
         <StyledForm>
             <StyledTitle>{title}</StyledTitle>
+            {error ? <StyledError>{error}</StyledError> : null}
             {inputsInfo.map((input) => (
                 <InputContainer
                     key={input.id}
