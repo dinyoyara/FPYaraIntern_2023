@@ -13,16 +13,22 @@ function WarehouseProvider({ children }) {
             const result = await axiosClient.post(`/warehouses`, { name, type, size });
             setWarehouse(result.data);
         } catch (error) {
-            setError(error);
+            setError(error.response.data.message);
         }
     };
 
     const getAllAsync = async () => {};
 
+    const clearError = () => {
+        setError(null);
+    };
+
     const valueToShare = {
         warehouse,
         error,
-        createWarehouseAsync
+        createWarehouseAsync,
+        getAllAsync,
+        clearError
     };
 
     return <WarehouseContext.Provider value={valueToShare}>{children}</WarehouseContext.Provider>;

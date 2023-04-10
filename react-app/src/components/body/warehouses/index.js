@@ -7,16 +7,21 @@ import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../../../constants';
 import useWarehouseContext from '../../../context/warehouse/hook';
 
 const Warehouses = () => {
-    const [inputName, setInputName] = useState();
+    const [inputName, setInputName] = useState('');
     const [inputSize, setInputSize] = useState(100);
     const [selectType, setSelectType] = useState(UNKNOWN);
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const { error, createWarehouseAsync } = useWarehouseContext();
+    const { error, createWarehouseAsync, clearError } = useWarehouseContext();
 
     const handleSubmit = async () => {
         await createWarehouseAsync(inputName, inputSize, selectType);
+    };
+    const handleOnChange = (event, setter, fieldName) => {
+        setter(event.target.value);
+        clearError();
+        // validateField(fieldName, event.target.value);
     };
 
     const createWarehouseFormInputs = [
@@ -26,7 +31,7 @@ const Warehouses = () => {
             type: 'text',
             label: 'Name:',
             height: formInputHeight,
-            onChange: (e) => setInputName(e.target.value)
+            onChange: (e) => handleOnChange(e, setInputName, 'name')
         },
         {
             id: 'size',
@@ -34,7 +39,7 @@ const Warehouses = () => {
             type: 'number',
             label: 'Size:',
             height: formInputHeight,
-            onChange: (e) => setInputSize(e.target.value)
+            onChange: (e) => handleOnChange(e, setInputSize, 'size')
         }
     ];
 
@@ -43,7 +48,7 @@ const Warehouses = () => {
             id: 'type',
             defaultValue: selectType,
             label: 'Type:',
-            onChange: (e) => setSelectType(e.target.value),
+            onChange: (e) => handleOnChange(e, setSelectType, 'type'),
             height: formInputHeight,
             options: [{ name: HAZARDOUS }, { name: NON_HAZARDOUS }, { name: UNKNOWN }]
         }
@@ -63,6 +68,7 @@ const Warehouses = () => {
                 inputsInfo={createWarehouseFormInputs}
                 buttonInfo={createWarehouseButton}
                 title='Create Warehouse'
+                error={error}
             />
         </StyledWarehouseScreen>
     );
