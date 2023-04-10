@@ -5,11 +5,11 @@ import StyledWarehouseScreen from './styles.css';
 import DataContainer from '../../shared/DataContainer';
 import { formInputHeight } from '../../../styles/const';
 import useWarehouseContext from '../../../context/warehouse/hook';
-import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../../../constants';
+import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
 
 const Warehouses = () => {
-    const [inputName, setInputName] = useState('');
-    const [inputSize, setInputSize] = useState(100);
+    const [inputName, setInputName] = useState(EMPTY_STRING);
+    const [inputSize, setInputSize] = useState(WAREHOUSE_MIN_SIZE);
     const [selectType, setSelectType] = useState(UNKNOWN);
     const [editedId, setEditedId] = useState();
     const [edit, setEdit] = useState(false);
@@ -64,8 +64,8 @@ const Warehouses = () => {
     };
 
     const clearForm = () => {
-        setInputName('');
-        setInputSize(100);
+        setInputName(EMPTY_STRING);
+        setInputSize(WAREHOUSE_MIN_SIZE);
         setSelectType(UNKNOWN);
     };
 
