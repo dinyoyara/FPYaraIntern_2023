@@ -14,7 +14,7 @@ const Warehouses = () => {
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError } = useWarehouseContext();
+    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError, deleteAsync } = useWarehouseContext();
 
     useEffect(() => {
         getAllAsync();
@@ -35,8 +35,8 @@ const Warehouses = () => {
         // validateField(fieldName, event.target.value);
     };
 
-    const handleDelete = (id) => {
-        console.log('delete', id);
+    const handleDelete = async (id) => {
+        await deleteAsync(id);
     };
 
     const handleEdit = (id) => {

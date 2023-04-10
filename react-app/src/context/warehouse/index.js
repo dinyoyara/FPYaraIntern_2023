@@ -24,8 +24,15 @@ function WarehouseProvider({ children }) {
             const response = await axiosClient.get(`/warehouses`);
             setWarehouses(response.data);
         } catch (error) {
-            setError(error.response.data.message);
+            //setError(error.response.data.message);
         }
+    };
+
+    const deleteAsync = async (id) => {
+        try {
+            await axiosClient.delete(`/warehouses/${id}`);
+            await getAllAsync();
+        } catch (error) {}
     };
 
     const clearError = () => {
@@ -37,6 +44,7 @@ function WarehouseProvider({ children }) {
         error,
         createWarehouseAsync,
         getAllAsync,
+        deleteAsync,
         clearError
     };
 
