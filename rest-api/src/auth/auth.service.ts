@@ -1,7 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
-  ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
@@ -32,7 +32,7 @@ export class AuthService {
       delete customer.dataValues.updatedAt;
       return customer;
     } catch (error) {
-      throw new ConflictException(error.errors[0].message);
+      throw new BadRequestException(error.errors[0].message);
     }
   };
 

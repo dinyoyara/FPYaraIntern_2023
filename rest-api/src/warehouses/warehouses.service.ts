@@ -1,6 +1,7 @@
 import { InjectModel } from '@nestjs/sequelize';
 import {
   ForbiddenException,
+  BadRequestException,
   Inject,
   Injectable,
   forwardRef,
@@ -26,10 +27,16 @@ export class WarehousesService {
     dto: WarehouseDto,
     customerId: string,
   ): Promise<Warehouse> => {
-    return this.warehouseModel.create({
-      ...dto,
-      customerId,
-    });
+    try {
+      const result = await this.warehouseModel.create({
+        ...dto,
+        customerId,
+      });
+
+      return result;
+    } catch (error) {
+      throw new BadRequestException(error.errors[0].message);
+    }
   };
 
   getAllByCustomerIdAsync = async (
