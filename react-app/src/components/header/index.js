@@ -12,6 +12,7 @@ const Header = ({ handleNavigation }) => {
 
     const handleLogout = () => {
         logout();
+        navigate('/');
     };
 
     return (
