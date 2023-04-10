@@ -19,6 +19,17 @@ function WarehouseProvider({ children }) {
         }
     };
 
+    const updateAsync = async (id, name, size, type) => {
+        try {
+            await axiosClient.put(`/warehouses/${id}`, { name, size, type });
+            await getAllAsync();
+            return true;
+        } catch (error) {
+            setError(error.response.data.message);
+            return false;
+        }
+    };
+
     const getAllAsync = async () => {
         try {
             const response = await axiosClient.get(`/warehouses`);
@@ -43,6 +54,7 @@ function WarehouseProvider({ children }) {
         warehouses,
         error,
         createWarehouseAsync,
+        updateAsync,
         getAllAsync,
         deleteAsync,
         clearError

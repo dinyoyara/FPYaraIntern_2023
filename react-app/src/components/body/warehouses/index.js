@@ -16,7 +16,8 @@ const Warehouses = () => {
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError, deleteAsync } = useWarehouseContext();
+    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError, deleteAsync, updateAsync } =
+        useWarehouseContext();
 
     useEffect(() => {
         getAllAsync();
@@ -40,10 +41,12 @@ const Warehouses = () => {
         await deleteAsync(id);
     };
 
-    const handleEdit = () => {
-        console.log(inputName, inputSize, selectType, editedId);
-        clearForm();
-        setEdit(false);
+    const handleEdit = async () => {
+        const result = await updateAsync(editedId, inputName, inputSize, selectType);
+        if (result) {
+            clearForm();
+            setEdit(false);
+        }
     };
 
     const handleStartEdit = (id) => {
