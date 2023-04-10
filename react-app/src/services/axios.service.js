@@ -23,6 +23,7 @@ function createAxiosClient({ options, getToken }) {
 
     return client;
 }
+
 const axiosClient = createAxiosClient({
     options: {
         baseURL: API_BASE_URL,

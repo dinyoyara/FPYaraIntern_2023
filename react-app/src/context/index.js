@@ -1,7 +1,12 @@
 import CustomerProvider from './customer';
+import WarehouseProvider from './warehouse';
 
 const ContextProvider = ({ children }) => {
-    return <CustomerProvider>{children}</CustomerProvider>;
+    return (
+        <CustomerProvider>
+            <WarehouseProvider>{children}</WarehouseProvider>
+        </CustomerProvider>
+    );
 };
 
 export default ContextProvider;
