@@ -4,7 +4,7 @@ import InputContainer from '../Input';
 import SelectContainer from '../Select';
 import Button from '../Button';
 
-const Form = ({ selectsInfo, inputsInfo, buttonInfo, title, error }) => {
+const Form = ({ selectsInfo, inputsInfo, buttonsInfo, title, error }) => {
     return (
         <StyledForm>
             <StyledTitle>{title}</StyledTitle>
@@ -36,12 +36,9 @@ const Form = ({ selectsInfo, inputsInfo, buttonInfo, title, error }) => {
                       />
                   ))
                 : null}
-            <Button
-                text={buttonInfo.text}
-                type={buttonInfo.type}
-                handleClick={buttonInfo.handleClick}
-                active={buttonInfo.active}
-            />
+            {buttonsInfo.map((b) => (
+                <Button key={b.text} text={b.text} type={b.type} handleClick={b.handleClick} active={b.active} />
+            ))}
         </StyledForm>
     );
 };
