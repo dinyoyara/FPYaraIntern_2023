@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import StyledWarehouseScreen from './styles.css';
 import Form from '../../shared/Form';
+import StyledWarehouseScreen from './styles.css';
+import DataContainer from '../../shared/DataContainer';
 import { formInputHeight } from '../../../styles/const';
-import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../../../constants';
 import useWarehouseContext from '../../../context/warehouse/hook';
+import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN } from '../../../constants';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState('');
@@ -13,15 +14,33 @@ const Warehouses = () => {
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const { error, createWarehouseAsync, clearError } = useWarehouseContext();
+    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError } = useWarehouseContext();
+
+    useEffect(() => {
+        getAllAsync();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleSubmit = async () => {
-        await createWarehouseAsync(inputName, inputSize, selectType);
+        const result = await createWarehouseAsync(inputName, inputSize, selectType);
+        if (result) {
+            setInputName('');
+            setInputSize(100);
+            setSelectType(UNKNOWN);
+        }
     };
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
         clearError();
         // validateField(fieldName, event.target.value);
+    };
+
+    const handleDelete = (id) => {
+        console.log('delete', id);
+    };
+
+    const handleEdit = (id) => {
+        console.log('edit', id);
     };
 
     const createWarehouseFormInputs = [
@@ -61,8 +80,18 @@ const Warehouses = () => {
         handleClick: handleSubmit
     };
 
+    const labelData = { name: 'name', type: 'type', size: 'size', freeSpace: 'free space' };
+
+    const dataButtons = [
+        { name: 'delete', onClick: (id) => handleDelete(id) },
+        { name: 'edit', onClick: (id) => handleEdit(id) }
+    ];
+
     return (
         <StyledWarehouseScreen>
+            {warehouses ? (
+                <DataContainer labelData={labelData} data={warehouses} dataButtons={dataButtons} title='Warehouses' />
+            ) : null}
             <Form
                 selectsInfo={createWarehouseFormSelect}
                 inputsInfo={createWarehouseFormInputs}

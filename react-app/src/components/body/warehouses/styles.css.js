@@ -7,7 +7,7 @@ const StyledWarehouseScreen = styled('div')`
     box-sizing: border-box;
     padding: 30px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
 `;
 
 export default StyledWarehouseScreen;
