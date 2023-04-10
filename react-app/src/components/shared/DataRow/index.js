@@ -4,8 +4,8 @@ const DataRow = ({ data, actions, ...styleProps }) => {
     const { id, ...restData } = data;
     return (
         <StyledDataRow {...styleProps}>
-            {Object.values(restData).map((x) => (
-                <StyledData>{x}</StyledData>
+            {Object.values(restData).map((x, i) => (
+                <StyledData key={i}>{x}</StyledData>
             ))}
             <StyledData>
                 {actions

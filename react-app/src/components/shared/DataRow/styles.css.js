@@ -7,10 +7,7 @@ const StyledDataRow = styled('div')`
     box-sizing: border-box;
     display: flex;
     background: rgba(192, 192, 192, 0.2);
-    margin-top: ${(p) => p.marginTop}}
     margin-bottom: 5px;
-    font-size: ${(p) => p.fontSize};
-    font-weight: ${(p) => p.fontWeight};
 `;
 
 const StyledData = styled('div')`
