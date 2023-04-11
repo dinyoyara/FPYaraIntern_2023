@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
 
-import { StyledScreen, StyledDataPart } from '../styles.css';
+import Card from '../../shared/Card';
+import Form from '../../shared/Form';
 import { StyledError } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
-import useWarehouseContext from '../../../context/warehouse/hook';
+import { StyledScreen, StyledDataPart } from '../styles.css';
 import useMovementContext from '../../../context/movement/hook';
-import Card from '../../shared/Card';
+import useWarehouseContext from '../../../context/warehouse/hook';
+import { formInputHeight } from '../../../styles/const';
 
 const Movements = () => {
+    const [inputSize, setInputCount] = useState();
+    const [inputExporterName, setInputExporterName] = useState();
+    const [inputImporterName, setInputImporterName] = useState();
+    const [inputProductName, setInputProductName] = useState();
+    const [formIsValid, setFormIsValid] = useState(true);
+
     const [showDetails, setShowDetails] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
+    const [showForm, setShowForm] = useState(true);
 
     const { warehouse, warehouses, getAllAsync, getOneAsync } = useWarehouseContext();
-    const { movements, error, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
+    const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
 
     useEffect(() => {
         setShowMovements(false);
@@ -22,6 +31,23 @@ const Movements = () => {
         getAllAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const handleOnChange = (event, setter, fieldName) => {
+        setter(event.target.value);
+        clearError();
+        // validateField(fieldName, event.target.value);
+    };
+
+    const handleCreate = async () => {
+        const exporterId = warehouses.find((x) => x.name === inputExporterName).id;
+        const importerId = warehouses.find((x) => x.name === inputImporterName).id;
+        const result = await createMovementAsync(exporterId, importerId, inputSize);
+        if (result) {
+            clearForm();
+        }
+    };
+
+    const clearForm = () => {};
 
     const handleShowDetails = async (id) => {
         const result = await getOneAsync(id);
@@ -40,6 +66,7 @@ const Movements = () => {
     const handleAddEXport = (id, type, products) => {
         console.log(type, products);
     };
+
     const handleAddImport = (id, type, freeSpace) => {
         console.log(freeSpace);
     };
@@ -72,20 +99,83 @@ const Movements = () => {
         }));
     };
 
+    const getFormInputs = () => {
+        return [
+            {
+                id: 'size',
+                value: inputSize,
+                type: 'number',
+                label: 'Size:',
+                height: formInputHeight,
+                onChange: (e) => handleOnChange(e, setInputCount, 'count')
+            }
+        ];
+    };
+
+    const getFormSelects = () => {
+        return [
+            {
+                id: 'export',
+                defaultValue: inputExporterName,
+                label: 'Export from:',
+                onChange: (e) => handleOnChange(e, setInputExporterName, 'export'),
+                height: formInputHeight,
+                options: []
+            },
+            {
+                id: 'import',
+                defaultValue: inputImporterName,
+                label: 'Import to:',
+                onChange: (e) => handleOnChange(e, setInputImporterName, 'import'),
+                height: formInputHeight,
+                options: []
+            },
+            {
+                id: 'product',
+                defaultValue: inputProductName,
+                label: 'Product:',
+                onChange: (e) => handleOnChange(e, setInputProductName, 'product'),
+                height: formInputHeight,
+                options: []
+            }
+        ];
+    };
+
+    const getFormButtons = () => {
+        return [
+            {
+                text: 'Create',
+                type: 'button',
+                active: formIsValid,
+                handleClick: handleCreate
+            }
+        ];
+    };
+
     return (
         <StyledScreen>
-            <StyledDataPart width='45%'>
-                {warehouses.length > 0 ? (
-                    <DataContainer
-                        labelData={getWarehousesDataLabels()}
-                        data={getWarehousesData()}
-                        title='Warehouses'
-                        actions={getWarehousesDataActions()}
-                    />
-                ) : (
-                    <StyledError>No warehouses</StyledError>
-                )}
-            </StyledDataPart>
+            {!showForm ? (
+                <StyledDataPart width='45%'>
+                    {warehouses.length > 0 ? (
+                        <DataContainer
+                            labelData={getWarehousesDataLabels()}
+                            data={getWarehousesData()}
+                            title='Warehouses'
+                            actions={getWarehousesDataActions()}
+                        />
+                    ) : (
+                        <StyledError>No warehouses</StyledError>
+                    )}
+                </StyledDataPart>
+            ) : (
+                <Form
+                    selectsInfo={getFormSelects()}
+                    inputsInfo={getFormInputs()}
+                    buttonsInfo={getFormButtons()}
+                    title='Import / Export'
+                    error={error}
+                />
+            )}
             {showDetails ? (
                 <Card
                     data={warehouse}
