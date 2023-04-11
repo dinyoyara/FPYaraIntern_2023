@@ -115,7 +115,7 @@ const Products = () => {
                 title='Create Product'
                 error={error}
             />
-            <StyledDataPart>
+            <StyledDataPart width='60%'>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
                 {showProducts && products.length > 0 ? (
                     <DataContainer labelData={getDataLabels()} data={products} title='Products' />

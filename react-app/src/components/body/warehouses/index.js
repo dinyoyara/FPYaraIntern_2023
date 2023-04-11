@@ -151,7 +151,7 @@ const Warehouses = () => {
                 title={edit ? 'Edit Warehouse' : 'Create Warehouse'}
                 error={error}
             />
-            <StyledDataPart>
+            <StyledDataPart width='60%'>
                 {warehouses.length > 0 ? (
                     <DataContainer
                         labelData={getDataLabels()}
