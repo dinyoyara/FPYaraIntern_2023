@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import Form from '../../shared/Form';
-import StyledWarehouseScreen from './styles.css';
 import DataContainer from '../../shared/DataContainer';
 import { formInputHeight } from '../../../styles/const';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
-import { StyledDataPart } from '../styles.css';
+import { StyledScreen, StyledDataPart } from '../styles.css';
 import { StyledError } from '../../styles.css';
 
 const Warehouses = () => {
@@ -144,7 +143,7 @@ const Warehouses = () => {
     };
 
     return (
-        <StyledWarehouseScreen>
+        <StyledScreen>
             <Form
                 selectsInfo={getFormSelects()}
                 inputsInfo={getFormInputs()}
@@ -164,7 +163,7 @@ const Warehouses = () => {
                     <StyledError>No warehouses</StyledError>
                 )}
             </StyledDataPart>
-        </StyledWarehouseScreen>
+        </StyledScreen>
     );
 };
 
