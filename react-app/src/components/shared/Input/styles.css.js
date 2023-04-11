@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const StyledInputContainer = styled('div')`
+    margin: 10px 0;
     height: ${(p) => p.height};
     display: flex;
     flex-direction: column;
