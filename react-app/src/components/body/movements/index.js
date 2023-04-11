@@ -1,5 +1,56 @@
+import { useState, useEffect } from 'react';
+
+import { StyledScreen, StyledDataPart } from '../styles.css';
+import { StyledError } from '../../styles.css';
+import DataContainer from '../../shared/DataContainer';
+import useWarehouseContext from '../../../context/warehouse/hook';
+import Card from '../../shared/Card';
+
 const Movements = () => {
-    return <div>Movements page</div>;
+    const [showDetails, setShowDetails] = useState(false);
+
+    const { warehouse, warehouses, getAllAsync, getOneAsync } = useWarehouseContext();
+
+    useEffect(() => {
+        getAllAsync();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleViewDetails = (id) => {
+        getOneAsync(id);
+        setShowDetails(true);
+    };
+
+    const getDataLabels = () => {
+        const { id, freeSpace, ...props } = warehouses[0];
+        return Object.keys(props);
+    };
+
+    const getWarehousesData = () => {
+        return warehouses.map((x) => ({ id: x.id, name: x.name, size: x.size, type: x.type }));
+    };
+
+    const getDataActions = () => {
+        return [{ name: 'details', onClick: (id) => handleViewDetails(id) }];
+    };
+
+    return (
+        <StyledScreen>
+            <StyledDataPart width='40%'>
+                {warehouses.length > 0 ? (
+                    <DataContainer
+                        labelData={getDataLabels()}
+                        data={getWarehousesData()}
+                        title='Warehouses'
+                        actions={getDataActions()}
+                    />
+                ) : (
+                    <StyledError>No warehouses</StyledError>
+                )}
+            </StyledDataPart>
+            {showDetails && warehouse ? <Card data={warehouse} width='50%' /> : null}
+        </StyledScreen>
+    );
 };
 
 export default Movements;
