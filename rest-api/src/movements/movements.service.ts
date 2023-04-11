@@ -13,6 +13,7 @@ import { ProductsService } from 'src/products/products.service';
 import { WarehousesService } from 'src/warehouses/warehouses.service';
 import { UNKNOWN } from '../constants';
 import { Product } from 'src/products/products.model';
+import { Warehouse } from 'src/warehouses/warehouses.model';
 
 @Injectable()
 export class MovementsService {
@@ -84,6 +85,16 @@ export class MovementsService {
         {
           model: Product,
           attributes: ['name', 'size', 'price'],
+        },
+        {
+          model: Warehouse,
+          as: 'importedWarehouse',
+          attributes: ['name'],
+        },
+        {
+          model: Warehouse,
+          as: 'exportedWarehouse',
+          attributes: ['name'],
         },
       ],
     });
