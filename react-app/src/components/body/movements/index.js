@@ -15,6 +15,10 @@ const Movements = () => {
     const { movements, error, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
 
     useEffect(() => {
+        setShowMovements(false);
+    }, [warehouse]);
+
+    useEffect(() => {
         getAllAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -40,7 +44,7 @@ const Movements = () => {
         console.log(freeSpace);
     };
 
-    const getDataLabels = () => {
+    const getWarehousesDataLabels = () => {
         const { id, freeSpace, ...props } = warehouses[0];
         return Object.keys(props);
     };
@@ -49,8 +53,23 @@ const Movements = () => {
         return warehouses.map((x) => ({ id: x.id, name: x.name, size: x.size, type: x.type }));
     };
 
-    const getDataActions = () => {
+    const getWarehousesDataActions = () => {
         return [{ name: 'details', onClick: (id) => handleShowDetails(id) }];
+    };
+
+    const getMovementsDataLabel = () => {
+        return ['exported Warehouse', 'imported Warehouse', 'product', 'count', 'date'];
+    };
+
+    const getMovementsData = () => {
+        return movements.map((x) => ({
+            id: x.id,
+            exportedWarehouse: x.exportedWarehouse ? x.exportedWarehouse.name : 'n/a',
+            importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : 'n/a',
+            product: x.product.name,
+            productCount: x.productCount,
+            date: x.date
+        }));
     };
 
     return (
@@ -58,10 +77,10 @@ const Movements = () => {
             <StyledDataPart width='45%'>
                 {warehouses.length > 0 ? (
                     <DataContainer
-                        labelData={getDataLabels()}
+                        labelData={getWarehousesDataLabels()}
                         data={getWarehousesData()}
                         title='Warehouses'
-                        actions={getDataActions()}
+                        actions={getWarehousesDataActions()}
                     />
                 ) : (
                     <StyledError>No warehouses</StyledError>
@@ -78,14 +97,10 @@ const Movements = () => {
                     showMovements={showMovements}
                 />
             ) : null}
-            {showMovements ? (
-                <DataContainer
-                    labelData={getDataLabels()}
-                    data={getWarehousesData()}
-                    title='Movements'
-                    actions={getDataActions()}
-                />
+            {showMovements && movements.length > 0 ? (
+                <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
             ) : null}
+            {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
         </StyledScreen>
     );
 };
