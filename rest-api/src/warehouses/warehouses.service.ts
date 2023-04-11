@@ -7,7 +7,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 
-import { WarehouseDto, WarehouseInfoDto } from './dto';
+import { WarehouseDto, WarehouseInfoDto, WarehouseWithProductDto } from './dto';
 import { Warehouse } from './warehouses.model';
 import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
@@ -87,11 +87,29 @@ export class WarehousesService {
     return warehouse;
   };
 
+  getOneDetails = async (id: string): Promise<WarehouseWithProductDto> => {
+    const warehouse = await this.getById(id);
+    const warehouseWithInfo = await this.warehouseToWarehouseInfoDtoAsync(
+      warehouse,
+    );
+    const result: WarehouseWithProductDto = {
+      id: warehouseWithInfo.id,
+      name: warehouseWithInfo.name,
+      size: warehouseWithInfo.size,
+      freeSpace: warehouseWithInfo.freeSpace,
+      type: warehouseWithInfo.type,
+      products: await this.getWarehouseProducts(id),
+    };
+    return result;
+  };
+
   getById = async (id: string): Promise<Warehouse> => {
     return this.warehouseModel.findByPk(id);
   };
 
-  getWarehouseProducts = async (id: string): Promise<ProductInfoModel[]> => {
+  private getWarehouseProducts = async (
+    id: string,
+  ): Promise<ProductInfoModel[]> => {
     const movements =
       await this.movementsService.getAllMovementsByWarehouseIdAsync(id);
     const productExprList: ProductWithExprMode[] = movements.reduce(
