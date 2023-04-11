@@ -9,17 +9,24 @@ import useMovementContext from '../../../context/movement/hook';
 import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
+import { UNKNOWN } from '../../../constants';
 
 const Movements = () => {
-    const [inputSize, setInputCount] = useState();
+    const [inputDate, setInputDate] = useState();
+    const [inputCount, setInputCount] = useState();
     const [inputExporterName, setInputExporterName] = useState();
     const [inputImporterName, setInputImporterName] = useState();
     const [inputProductName, setInputProductName] = useState();
+
     const [formIsValid, setFormIsValid] = useState(true);
 
     const [showDetails, setShowDetails] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
     const [showForm, setShowForm] = useState(false);
+
+    const [exportOptions, setExportOptions] = useState([]);
+    const [importOptions, setImportOptions] = useState([]);
+    const [productOptions, setProductOptions] = useState([]);
 
     const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
@@ -41,15 +48,31 @@ const Movements = () => {
     };
 
     const handleCreate = async () => {
-        const exporterId = warehouses.find((x) => x.name === inputExporterName).id;
-        const importerId = warehouses.find((x) => x.name === inputImporterName).id;
-        const result = await createMovementAsync(exporterId, importerId, inputSize);
-        if (result) {
-            clearForm();
-        }
+        const exporter = warehouses.find((x) => x.name === inputExporterName);
+        const importer = warehouses.find((x) => x.name === inputImporterName);
+        const product = products.find((x) => x.name === inputProductName);
+        console.log(inputDate, exporter, importer, product);
+        //const result = await createMovementAsync(exporterId, importerId, inputCount);
+        // if (result) {
+        //     clearForm();
+        // }
     };
 
-    const clearForm = () => {};
+    const handleRemoveForm = () => {
+        setShowForm(false);
+        clearForm();
+    };
+
+    const clearForm = () => {
+        setInputDate();
+        setInputCount();
+        setInputExporterName();
+        setInputImporterName();
+        setInputProductName();
+        setImportOptions([]);
+        setExportOptions([]);
+        setProductOptions([]);
+    };
 
     const handleShowDetails = async (id) => {
         const result = await getOneAsync(id);
@@ -65,12 +88,39 @@ const Movements = () => {
         setShowMovements(false);
     };
 
-    const handleAddExport = (id, type, products) => {
-        setShowForm(true);
+    const handleAddExport = (name, type, products) => {
+        if (products.length === 0) return;
+        setInputExporterName(name);
+        setExportOptions([{ name: name }]);
+        setProductOptions(() => {
+            return products.map((p) => ({ name: p.name }));
+        });
+        setImportOptions(() => {
+            if (warehouses.length === 0) return [];
+            return warehouses
+                .filter((x) => (x.type === type || x.type === UNKNOWN) && x.name !== name)
+                .map((x) => ({ name: x.name }));
+        });
         setShowMovements(false);
+        setShowForm(true);
     };
 
-    const handleAddImport = (id, type, freeSpace) => {
+    const handleAddImport = async (name, type, freeSpace) => {
+        if (freeSpace === 0) return;
+        setInputImporterName(name);
+        setImportOptions([{ name: name }]);
+        setExportOptions(() => {
+            return warehouses
+                .filter((x) => x.name !== name && (type === UNKNOWN ? true : x.type === type))
+                .map((x) => ({ name: x.name }));
+        });
+        setInputExporterName(exportOptions[0]);
+        await getAllAsync();
+        const correctProducts = type === UNKNOWN ? products : products.filter((x) => x.type === type);
+        setProductOptions(() => {
+            return correctProducts.map((x) => ({ name: x.name }));
+        });
+        setInputProductName(productOptions[0]);
         setShowForm(true);
         setShowMovements(false);
     };
@@ -106,8 +156,16 @@ const Movements = () => {
     const getFormInputs = () => {
         return [
             {
+                id: 'date',
+                value: inputDate,
+                type: 'date',
+                label: 'Date:',
+                height: formInputHeight,
+                onChange: (e) => handleOnChange(e, setInputDate, 'date')
+            },
+            {
                 id: 'size',
-                value: inputSize,
+                value: inputCount,
                 type: 'number',
                 label: 'Size:',
                 height: formInputHeight,
@@ -124,7 +182,7 @@ const Movements = () => {
                 label: 'Export from:',
                 onChange: (e) => handleOnChange(e, setInputExporterName, 'export'),
                 height: formInputHeight,
-                options: []
+                options: exportOptions
             },
             {
                 id: 'import',
@@ -132,7 +190,7 @@ const Movements = () => {
                 label: 'Import to:',
                 onChange: (e) => handleOnChange(e, setInputImporterName, 'import'),
                 height: formInputHeight,
-                options: []
+                options: importOptions
             },
             {
                 id: 'product',
@@ -140,7 +198,7 @@ const Movements = () => {
                 label: 'Product:',
                 onChange: (e) => handleOnChange(e, setInputProductName, 'product'),
                 height: formInputHeight,
-                options: []
+                options: productOptions
             }
         ];
     };
@@ -157,7 +215,7 @@ const Movements = () => {
                 text: 'Remove Form',
                 type: 'button',
                 active: true,
-                handleClick: () => setShowForm(false)
+                handleClick: handleRemoveForm
             }
         ];
     };
