@@ -4,26 +4,35 @@ import { StyledScreen, StyledDataPart } from '../styles.css';
 import { StyledError } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
 import useWarehouseContext from '../../../context/warehouse/hook';
+import useMovementContext from '../../../context/movement/hook';
 import Card from '../../shared/Card';
 
 const Movements = () => {
     const [showDetails, setShowDetails] = useState(false);
+    const [showMovements, setShowMovements] = useState(false);
 
     const { warehouse, warehouses, getAllAsync, getOneAsync } = useWarehouseContext();
+    const { movements, error, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
 
     useEffect(() => {
         getAllAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleViewDetails = (id) => {
-        getOneAsync(id);
-        setShowDetails(true);
+    const handleShowDetails = async (id) => {
+        const result = await getOneAsync(id);
+        if (result) setShowDetails(true);
     };
 
-    const handleViewMovements = (id) => {
-        console.log(id);
+    const handleViewMovements = async (id) => {
+        const result = await getAllByWarehouseIdAsync(id);
+        if (result) setShowMovements(true);
     };
+
+    const handleHideMovements = () => {
+        setShowMovements(false);
+    };
+
     const handleAddEXport = (id, type, products) => {
         console.log(type, products);
     };
@@ -41,7 +50,7 @@ const Movements = () => {
     };
 
     const getDataActions = () => {
-        return [{ name: 'details', onClick: (id) => handleViewDetails(id) }];
+        return [{ name: 'details', onClick: (id) => handleShowDetails(id) }];
     };
 
     return (
@@ -58,13 +67,23 @@ const Movements = () => {
                     <StyledError>No warehouses</StyledError>
                 )}
             </StyledDataPart>
-            {showDetails && warehouse ? (
+            {showDetails ? (
                 <Card
                     data={warehouse}
                     width='50%'
                     addExport={handleAddEXport}
                     addImport={handleAddImport}
                     viewMovements={handleViewMovements}
+                    hideMovements={handleHideMovements}
+                    showMovements={showMovements}
+                />
+            ) : null}
+            {showMovements ? (
+                <DataContainer
+                    labelData={getDataLabels()}
+                    data={getWarehousesData()}
+                    title='Movements'
+                    actions={getDataActions()}
                 />
             ) : null}
         </StyledScreen>

@@ -9,6 +9,7 @@ const StyledScreen = styled('div')`
     padding: 50px;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 `;
 
 const StyledDataPart = styled('div')`
