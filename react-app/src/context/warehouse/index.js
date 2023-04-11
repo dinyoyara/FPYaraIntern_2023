@@ -6,6 +6,7 @@ const WarehouseContext = createContext();
 
 function WarehouseProvider({ children }) {
     const [warehouses, setWarehouses] = useState([]);
+    const [warehouse, setWarehouse] = useState();
     const [error, setError] = useState();
 
     const createWarehouseAsync = async (name, size, type) => {
@@ -39,11 +40,24 @@ function WarehouseProvider({ children }) {
         }
     };
 
+    const getOneAsync = async (id) => {
+        try {
+            const response = await axiosClient.get(`/warehouses/${id}`);
+            setWarehouse(response.data);
+            return true;
+        } catch (error) {
+            return false;
+            //setError(error.response.data.message);
+        }
+    };
+
     const deleteAsync = async (id) => {
         try {
             await axiosClient.delete(`/warehouses/${id}`);
             await getAllAsync();
-        } catch (error) {}
+        } catch (error) {
+            //setError(error.response.data.message);
+        }
     };
 
     const clearError = () => {
@@ -51,11 +65,13 @@ function WarehouseProvider({ children }) {
     };
 
     const valueToShare = {
+        warehouse,
         warehouses,
         error,
         createWarehouseAsync,
         updateAsync,
         getAllAsync,
+        getOneAsync,
         deleteAsync,
         clearError
     };
