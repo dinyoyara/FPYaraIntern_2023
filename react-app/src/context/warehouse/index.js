@@ -12,7 +12,7 @@ function WarehouseProvider({ children }) {
     const createWarehouseAsync = async (name, size, type) => {
         try {
             await axiosClient.post(`/warehouses`, { name, type, size });
-            await getAllAsync();
+            await getAllByCustomerAsync();
             return true;
         } catch (error) {
             setError(error.response.data.message);
@@ -23,7 +23,7 @@ function WarehouseProvider({ children }) {
     const updateAsync = async (id, name, size, type) => {
         try {
             await axiosClient.put(`/warehouses/${id}`, { name, size, type });
-            await getAllAsync();
+            await getAllByCustomerAsync();
             return true;
         } catch (error) {
             setError(error.response.data.message);
@@ -31,7 +31,7 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const getAllAsync = async () => {
+    const getAllByCustomerAsync = async () => {
         try {
             const response = await axiosClient.get(`/warehouses`);
             setWarehouses(response.data);
@@ -54,7 +54,7 @@ function WarehouseProvider({ children }) {
     const deleteAsync = async (id) => {
         try {
             await axiosClient.delete(`/warehouses/${id}`);
-            await getAllAsync();
+            await getAllByCustomerAsync();
         } catch (error) {
             //setError(error.response.data.message);
         }
@@ -70,7 +70,7 @@ function WarehouseProvider({ children }) {
         error,
         createWarehouseAsync,
         updateAsync,
-        getAllAsync,
+        getAllByCustomerAsync,
         getOneAsync,
         deleteAsync,
         clearError

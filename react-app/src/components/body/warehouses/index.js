@@ -17,11 +17,11 @@ const Warehouses = () => {
 
     const [formIsValid, setFormIsValid] = useState(true);
 
-    const { warehouses, error, createWarehouseAsync, getAllAsync, clearError, deleteAsync, updateAsync } =
+    const { warehouses, error, createWarehouseAsync, getAllByCustomerAsync, clearError, deleteAsync, updateAsync } =
         useWarehouseContext();
 
     useEffect(() => {
-        getAllAsync();
+        getAllByCustomerAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
