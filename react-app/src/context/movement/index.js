@@ -24,11 +24,13 @@ function MovementProvider({ children }) {
         }
     };
 
-    const getAllByWArehouseIdAsync = async (id) => {
+    const getAllByWarehouseIdAsync = async (id) => {
         try {
             const response = await axiosClient.get(`/movements/warehouse/${id}`);
             setMovements(response.data);
+            return true;
         } catch (error) {
+            return false;
             //setError(error.response.data.message);
         }
     };
@@ -41,7 +43,7 @@ function MovementProvider({ children }) {
         movements,
         error,
         createMovementAsync,
-        getAllByWArehouseIdAsync,
+        getAllByWarehouseIdAsync,
         clearError
     };
 
