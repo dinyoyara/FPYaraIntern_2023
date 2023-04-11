@@ -118,10 +118,10 @@ const Products = () => {
             />
             <StyledDataPart>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
-                {showProducts && products ? (
+                {showProducts && products.length > 0 ? (
                     <DataContainer labelData={getDataLabels()} data={products} title='Products' />
                 ) : null}
-                {showProducts && !products ? <StyledError>No products</StyledError> : null}
+                {showProducts && products.length === 0 ? <StyledError>No products</StyledError> : null}
             </StyledDataPart>
         </StyledProductsScreen>
     );

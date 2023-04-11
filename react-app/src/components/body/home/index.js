@@ -22,7 +22,7 @@ const Home = () => {
             ) : (
                 <>
                     {form}
-                    <StyledLink onClick={changeActiveForm}>{showLogin ? 'signup' : 'signin'}</StyledLink>
+                    <StyledLink onClick={changeActiveForm}>{showLogin ? 'sign up' : 'sign in'}</StyledLink>
                 </>
             )}
         </>

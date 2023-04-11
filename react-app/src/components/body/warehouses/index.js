@@ -7,6 +7,7 @@ import { formInputHeight } from '../../../styles/const';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
 import { StyledDataPart } from '../styles.css';
+import { StyledError } from '../../styles.css';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
@@ -152,14 +153,16 @@ const Warehouses = () => {
                 error={error}
             />
             <StyledDataPart>
-                {warehouses ? (
+                {warehouses.length > 0 ? (
                     <DataContainer
                         labelData={getDataLabels()}
                         data={warehouses}
                         actions={getDataActions()}
                         title='Warehouses'
                     />
-                ) : null}
+                ) : (
+                    <StyledError>No warehouses</StyledError>
+                )}
             </StyledDataPart>
         </StyledWarehouseScreen>
     );

@@ -28,7 +28,7 @@ const LoginForm = () => {
 
     return (
         <StyledLoginForm>
-            <StyledTitle>Signin</StyledTitle>
+            <StyledTitle>Sign in</StyledTitle>
             {error ? <StyledError>{error}</StyledError> : null}
             <InputContainer
                 height={formInputHeight}
@@ -48,7 +48,7 @@ const LoginForm = () => {
                 value={password}
                 onChange={(e) => handleOnChange(e, setPassword, 'password')}
             />{' '}
-            <Button type='button' text='Signin' handleClick={submitHandler} active={formIsValid} />
+            <Button type='button' text='Sign in' handleClick={submitHandler} active={formIsValid} />
         </StyledLoginForm>
     );
 };
