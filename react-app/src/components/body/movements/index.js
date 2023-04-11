@@ -6,6 +6,7 @@ import { StyledError } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
 import { StyledScreen, StyledDataPart } from '../styles.css';
 import useMovementContext from '../../../context/movement/hook';
+import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 
@@ -18,17 +19,18 @@ const Movements = () => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
-    const [showForm, setShowForm] = useState(true);
+    const [showForm, setShowForm] = useState(false);
 
-    const { warehouse, warehouses, getAllAsync, getOneAsync } = useWarehouseContext();
+    const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
+    const { products, getAllAsync } = useProductContext();
 
     useEffect(() => {
         setShowMovements(false);
     }, [warehouse]);
 
     useEffect(() => {
-        getAllAsync();
+        getAllByCustomerAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -63,12 +65,14 @@ const Movements = () => {
         setShowMovements(false);
     };
 
-    const handleAddEXport = (id, type, products) => {
-        console.log(type, products);
+    const handleAddExport = (id, type, products) => {
+        setShowForm(true);
+        setShowMovements(false);
     };
 
     const handleAddImport = (id, type, freeSpace) => {
-        console.log(freeSpace);
+        setShowForm(true);
+        setShowMovements(false);
     };
 
     const getWarehousesDataLabels = () => {
@@ -148,6 +152,12 @@ const Movements = () => {
                 type: 'button',
                 active: formIsValid,
                 handleClick: handleCreate
+            },
+            {
+                text: 'Remove Form',
+                type: 'button',
+                active: true,
+                handleClick: () => setShowForm(false)
             }
         ];
     };
@@ -180,7 +190,7 @@ const Movements = () => {
                 <Card
                     data={warehouse}
                     width='50%'
-                    addExport={handleAddEXport}
+                    addExport={handleAddExport}
                     addImport={handleAddImport}
                     viewMovements={handleViewMovements}
                     hideMovements={handleHideMovements}
