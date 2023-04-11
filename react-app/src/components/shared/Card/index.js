@@ -2,7 +2,7 @@ import { StyledLink, StyledError } from '../../styles.css';
 import DataContainer from '../DataContainer';
 import StyledCard, { StyledCardElement, StyledValue, StyledLinkContainer } from './styles.css';
 
-const Card = ({ data, width, addImport, addExport, viewMovements }) => {
+const Card = ({ data, width, addImport, addExport, viewMovements, hideMovements, showMovements }) => {
     const getDataLabels = () => {
         const { id, ...props } = data.products[0];
         return Object.keys(props);
@@ -41,7 +41,11 @@ const Card = ({ data, width, addImport, addExport, viewMovements }) => {
                         <StyledLink onClick={() => addImport(data.id, data.type, data.freeSpace)}>
                             add import
                         </StyledLink>
-                        <StyledLink onClick={() => viewMovements(data.id)}>view movements</StyledLink>
+                        {showMovements ? (
+                            <StyledLink onClick={hideMovements}>hide movements</StyledLink>
+                        ) : (
+                            <StyledLink onClick={() => viewMovements(data.id)}>view movements</StyledLink>
+                        )}
                     </StyledLinkContainer>
                 </StyledCard>
             ) : (
