@@ -5,7 +5,7 @@ import axiosClient from '../../services/axios.service';
 const WarehouseContext = createContext();
 
 function WarehouseProvider({ children }) {
-    const [warehouses, setWarehouses] = useState();
+    const [warehouses, setWarehouses] = useState([]);
     const [error, setError] = useState();
 
     const createWarehouseAsync = async (name, size, type) => {

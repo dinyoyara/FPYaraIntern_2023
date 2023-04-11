@@ -5,7 +5,7 @@ import axiosClient from '../../services/axios.service';
 const ProductContext = createContext();
 
 function ProductProvider({ children }) {
-    const [products, setProducts] = useState();
+    const [products, setProducts] = useState([]);
     const [error, setError] = useState();
 
     const createProductAsync = async (name, price, size, type) => {
