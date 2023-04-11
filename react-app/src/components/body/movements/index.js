@@ -21,6 +21,16 @@ const Movements = () => {
         setShowDetails(true);
     };
 
+    const handleViewMovements = (id) => {
+        console.log(id);
+    };
+    const handleAddEXport = (id, type, products) => {
+        console.log(type, products);
+    };
+    const handleAddImport = (id, type, freeSpace) => {
+        console.log(freeSpace);
+    };
+
     const getDataLabels = () => {
         const { id, freeSpace, ...props } = warehouses[0];
         return Object.keys(props);
@@ -36,7 +46,7 @@ const Movements = () => {
 
     return (
         <StyledScreen>
-            <StyledDataPart width='40%'>
+            <StyledDataPart width='45%'>
                 {warehouses.length > 0 ? (
                     <DataContainer
                         labelData={getDataLabels()}
@@ -48,7 +58,15 @@ const Movements = () => {
                     <StyledError>No warehouses</StyledError>
                 )}
             </StyledDataPart>
-            {showDetails && warehouse ? <Card data={warehouse} width='50%' /> : null}
+            {showDetails && warehouse ? (
+                <Card
+                    data={warehouse}
+                    width='50%'
+                    addExport={handleAddEXport}
+                    addImport={handleAddImport}
+                    viewMovements={handleViewMovements}
+                />
+            ) : null}
         </StyledScreen>
     );
 };
