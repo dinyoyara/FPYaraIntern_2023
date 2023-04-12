@@ -10,6 +10,7 @@ import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 import { UNKNOWN } from '../../../constants';
+import { GetDateString } from './helpers';
 
 const Movements = () => {
     const [inputDate, setInputDate] = useState();
@@ -28,6 +29,8 @@ const Movements = () => {
     const [exportOptions, setExportOptions] = useState([]);
     const [importOptions, setImportOptions] = useState([]);
     const [productOptions, setProductOptions] = useState([]);
+
+    const [formName, setFormName] = useState('Import / Export');
 
     const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
@@ -89,12 +92,14 @@ const Movements = () => {
         setShowMovements(false);
     };
 
+    // IMPORT / EXPORT
     const handleAddExport = (name, type, products) => {
         setShowMovements(false);
         if (products.length === 0) {
             setLimitation('no products to export');
             return;
         }
+        setFormName('Export');
         setInputExporterName(name);
         setExportOptions([{ name: name }]);
         setProductOptions(() => {
@@ -111,7 +116,12 @@ const Movements = () => {
     };
 
     const handleAddImport = async (name, type, freeSpace) => {
-        if (freeSpace === 0) return;
+        if (freeSpace === 0) {
+            setLimitation('no space for import');
+            return;
+        }
+
+        setFormName('Import');
         setInputImporterName(name);
         setImportOptions([{ name: name }]);
         setExportOptions(() => {
@@ -130,6 +140,7 @@ const Movements = () => {
         setShowMovements(false);
     };
 
+    // SET WAREHOUSES DATA
     const getWarehousesDataLabels = () => {
         const { id, freeSpace, ...props } = warehouses[0];
         return Object.keys(props);
@@ -143,6 +154,7 @@ const Movements = () => {
         return [{ name: 'details', onClick: (id) => handleShowDetails(id) }];
     };
 
+    // SET MOVEMENTS DATA
     const getMovementsDataLabel = () => {
         return ['exported Warehouse', 'imported Warehouse', 'product', 'count', 'date'];
     };
@@ -154,10 +166,11 @@ const Movements = () => {
             importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : 'n/a',
             product: x.product.name,
             productCount: x.productCount,
-            date: x.date
+            date: GetDateString(x.date)
         }));
     };
 
+    // SET FORM ELEMENTS
     const getFormInputs = () => {
         return [
             {
@@ -219,13 +232,14 @@ const Movements = () => {
         ];
     };
 
+    // JSX
     return (
         <StyledScreen>
             <Form
                 selectsInfo={getFormSelects()}
                 inputsInfo={getFormInputs()}
                 buttonsInfo={getFormButtons()}
-                title='Import / Export'
+                title={formName}
                 error={error}
             />
 
