@@ -18,7 +18,7 @@ export class MathService {
       this.httpService.get(MATH_API_URL, {
         params: {
           [MATH_API_PARAM_EXPR_NAME]: expr,
-          [MATH_API_PARAM_PRECISION_NAME]: MATH_API_PARAM_PRECISION_VALUE,
+          //[MATH_API_PARAM_PRECISION_NAME]: MATH_API_PARAM_PRECISION_VALUE,
         },
       }),
     );

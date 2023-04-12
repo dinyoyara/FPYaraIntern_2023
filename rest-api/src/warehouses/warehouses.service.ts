@@ -152,7 +152,15 @@ export class WarehousesService {
       return acc;
     }, expr);
 
-    return this.mathService.calculateAsync(expr);
+    const result = await this.mathService.calculateAsync(expr);
+
+    console.log('---------------------------------');
+    console.log(`--- free space --- ${expr} ----`);
+    console.log('---------------------------------');
+    console.log(`--- result --- ${result} ----`);
+    console.log('---------------------------------');
+
+    return result;
   };
 
   private warehouseToWarehouseInfoDtoAsync = async (
@@ -169,9 +177,12 @@ export class WarehousesService {
   ): Promise<ProductInfoModel> => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { expr, ...product } = productDto;
+    console.log('---------------------------------');
+    console.log(`--- product count --- ${expr} ----`);
+    console.log('---------------------------------');
     return {
       ...product,
-      count: await this.mathService.calculateAsync(productDto.expr),
+      count: await this.mathService.calculateAsync(expr),
     };
   };
 }
