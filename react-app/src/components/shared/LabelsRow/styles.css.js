@@ -7,7 +7,7 @@ const StyledLabelsRow = styled('div')`
     box-sizing: border-box;
     display: flex;
     background: rgba(192, 192, 192, 0.2);
-    margin-top: 30px;
+    margin-top: 15px;
     margin-bottom: 5px;
     font-weight: 700;
 `;
