@@ -19,6 +19,7 @@ const Movements = () => {
     const [inputProductName, setInputProductName] = useState();
 
     const [formIsValid, setFormIsValid] = useState(true);
+    const [limitation, setLimitation] = useState();
 
     const [showDetails, setShowDetails] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
@@ -32,9 +33,9 @@ const Movements = () => {
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
     const { products, getAllAsync } = useProductContext();
 
-    useEffect(() => {
-        setShowMovements(false);
-    }, [warehouse]);
+    useEffect(() => {}, [warehouse, showForm]);
+
+    useEffect(() => {}, [warehouse, showForm, showMovements]);
 
     useEffect(() => {
         getAllByCustomerAsync();
@@ -58,28 +59,28 @@ const Movements = () => {
         // }
     };
 
-    const handleRemoveForm = () => {
-        setShowForm(false);
-        clearForm();
-    };
-
-    const clearForm = () => {
-        setInputDate();
-        setInputCount();
-        setInputExporterName();
-        setInputImporterName();
-        setInputProductName();
-        setImportOptions([]);
-        setExportOptions([]);
-        setProductOptions([]);
-    };
+    // const clearForm = () => {
+    //     setInputDate();
+    //     setInputCount();
+    //     setInputExporterName();
+    //     setInputImporterName();
+    //     setInputProductName();
+    //     setImportOptions([]);
+    //     setExportOptions([]);
+    //     setProductOptions([]);
+    // };
 
     const handleShowDetails = async (id) => {
         const result = await getOneAsync(id);
         if (result) setShowDetails(true);
     };
 
-    const handleViewMovements = async (id) => {
+    const hideDetails = () => {
+        setShowDetails(false);
+        setShowMovements(false);
+    };
+
+    const handleShowMovements = async (id) => {
         const result = await getAllByWarehouseIdAsync(id);
         if (result) setShowMovements(true);
     };
@@ -89,7 +90,11 @@ const Movements = () => {
     };
 
     const handleAddExport = (name, type, products) => {
-        if (products.length === 0) return;
+        setShowMovements(false);
+        if (products.length === 0) {
+            setLimitation('no products to export');
+            return;
+        }
         setInputExporterName(name);
         setExportOptions([{ name: name }]);
         setProductOptions(() => {
@@ -98,10 +103,10 @@ const Movements = () => {
         setImportOptions(() => {
             if (warehouses.length === 0) return [];
             return warehouses
-                .filter((x) => (x.type === type || x.type === UNKNOWN) && x.name !== name)
+                .filter((x) => x.name !== name && (x.type === type || x.type === UNKNOWN))
                 .map((x) => ({ name: x.name }));
         });
-        setShowMovements(false);
+
         setShowForm(true);
     };
 
@@ -111,7 +116,7 @@ const Movements = () => {
         setImportOptions([{ name: name }]);
         setExportOptions(() => {
             return warehouses
-                .filter((x) => x.name !== name && (type === UNKNOWN ? true : x.type === type))
+                .filter((x) => x.name !== name && x.size > x.freeSpace && (type === UNKNOWN ? true : x.type === type))
                 .map((x) => ({ name: x.name }));
         });
         setInputExporterName(exportOptions[0]);
@@ -210,55 +215,49 @@ const Movements = () => {
                 type: 'button',
                 active: formIsValid,
                 handleClick: handleCreate
-            },
-            {
-                text: 'Remove Form',
-                type: 'button',
-                active: true,
-                handleClick: handleRemoveForm
             }
         ];
     };
 
     return (
         <StyledScreen>
-            {!showForm ? (
-                <StyledDataPart width='45%'>
-                    {warehouses.length > 0 ? (
-                        <DataContainer
-                            labelData={getWarehousesDataLabels()}
-                            data={getWarehousesData()}
-                            title='Warehouses'
-                            actions={getWarehousesDataActions()}
-                        />
-                    ) : (
-                        <StyledError>No warehouses</StyledError>
-                    )}
-                </StyledDataPart>
-            ) : (
-                <Form
-                    selectsInfo={getFormSelects()}
-                    inputsInfo={getFormInputs()}
-                    buttonsInfo={getFormButtons()}
-                    title='Import / Export'
-                    error={error}
-                />
-            )}
-            {showDetails ? (
-                <Card
-                    data={warehouse}
-                    width='50%'
-                    addExport={handleAddExport}
-                    addImport={handleAddImport}
-                    viewMovements={handleViewMovements}
-                    hideMovements={handleHideMovements}
-                    showMovements={showMovements}
-                />
-            ) : null}
-            {showMovements && movements.length > 0 ? (
-                <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
-            ) : null}
-            {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
+            <Form
+                selectsInfo={getFormSelects()}
+                inputsInfo={getFormInputs()}
+                buttonsInfo={getFormButtons()}
+                title='Import / Export'
+                error={error}
+            />
+
+            <StyledDataPart width='65%'>
+                {!showMovements && warehouses.length > 0 ? (
+                    <DataContainer
+                        labelData={getWarehousesDataLabels()}
+                        data={getWarehousesData()}
+                        title='Warehouses'
+                        actions={getWarehousesDataActions()}
+                    />
+                ) : null}
+                {!showMovements && warehouses.length === 0 ? <StyledError>No warehouses</StyledError> : null}
+
+                {showDetails ? (
+                    <Card
+                        data={warehouse}
+                        width='100%'
+                        addExport={handleAddExport}
+                        addImport={handleAddImport}
+                        showMovements={handleShowMovements}
+                        hideMovements={handleHideMovements}
+                        isMovementsShowed={showMovements}
+                        hideDetails={hideDetails}
+                    />
+                ) : null}
+                {limitation ? <StyledError>{limitation}</StyledError> : null}
+                {showMovements && movements.length > 0 ? (
+                    <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
+                ) : null}
+                {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
+            </StyledDataPart>
         </StyledScreen>
     );
 };
