@@ -44,6 +44,7 @@ export class MovementsService {
       importedWarehouseId,
     );
     const correctType =
+      importedWarehouse === null ||
       importedWarehouse.type === UNKNOWN ||
       product.type === importedWarehouse.type;
 
@@ -53,7 +54,7 @@ export class MovementsService {
 
     const movement = await this.movementModel.create({ ...dto });
 
-    if (importedWarehouse.type === UNKNOWN) {
+    if (importedWarehouse !== null && importedWarehouse.type === UNKNOWN) {
       await this.warehouseService.updateAsync(importedWarehouseId, customerId, {
         name: importedWarehouse.name,
         size: importedWarehouse.size,
@@ -109,6 +110,9 @@ export class MovementsService {
       await this.warehouseService.getAllByCustomerIdAsync(customerId);
     if (exportWarehouseId === null) {
       return customerWarehouses.some((x) => x.id === importWarehouseId);
+    }
+    if (importWarehouseId === null) {
+      return customerWarehouses.some((x) => x.id === exportWarehouseId);
     }
     return (
       customerWarehouses.some((x) => x.id === importWarehouseId) &&
