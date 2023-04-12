@@ -7,13 +7,17 @@ import useWarehouseContext from '../../../context/warehouse/hook';
 import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
 import { StyledScreen, StyledDataPart } from '../styles.css';
 import { StyledError } from '../../styles.css';
+import Modal from '../../shared/Modal';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
     const [inputSize, setInputSize] = useState(WAREHOUSE_MIN_SIZE);
     const [selectType, setSelectType] = useState(UNKNOWN);
+
     const [editedId, setEditedId] = useState();
     const [edit, setEdit] = useState(false);
+
+    const [limitation, setLimitation] = useState();
 
     const [formIsValid, setFormIsValid] = useState(true);
 
@@ -39,6 +43,11 @@ const Warehouses = () => {
     };
 
     const handleDelete = async (id) => {
+        const deletedWarehouse = warehouses.find((x) => x.id === id);
+        if (!deletedWarehouse || deletedWarehouse.size > deletedWarehouse.freeSpace) {
+            setLimitation('warehouse has products');
+            return;
+        }
         await deleteAsync(id);
     };
 
@@ -70,6 +79,7 @@ const Warehouses = () => {
         setSelectType(UNKNOWN);
     };
 
+    // SET FORM ELEMENTS
     const getFormInputs = () => {
         return [
             {
@@ -130,6 +140,7 @@ const Warehouses = () => {
         return buttons;
     };
 
+    //SET WAREHOUSES DATA
     const getDataLabels = () => {
         const { id, ...props } = warehouses[0];
         return Object.keys(props);
@@ -142,6 +153,7 @@ const Warehouses = () => {
         ];
     };
 
+    //JSX
     return (
         <StyledScreen>
             <Form
@@ -163,6 +175,7 @@ const Warehouses = () => {
                     <StyledError>No warehouses</StyledError>
                 )}
             </StyledDataPart>
+            <Modal text={limitation} show={limitation} toggle={() => setLimitation()} />
         </StyledScreen>
     );
 };

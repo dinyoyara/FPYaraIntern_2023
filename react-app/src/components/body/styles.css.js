@@ -10,6 +10,7 @@ const StyledScreen = styled('div')`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    position: relative;
 `;
 
 const StyledDataPart = styled('div')`

@@ -11,6 +11,7 @@ import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 import { UNKNOWN, EXTERNAL } from '../../../constants';
 import { GetDateString } from './helpers';
+import Modal from '../../shared/Modal';
 
 const Movements = () => {
     const [inputDate, setInputDate] = useState(new Date().toISOString().split('T')[0]);
@@ -40,11 +41,6 @@ const Movements = () => {
         getAllAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        setLimitation();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showDetails, showMovements]);
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
@@ -107,7 +103,6 @@ const Movements = () => {
             setLimitation('no products to export');
             return;
         }
-        setLimitation();
         setFormName('Export');
 
         setInputExporterName(name);
@@ -136,7 +131,6 @@ const Movements = () => {
             setLimitation('no space for import');
             return;
         }
-        setLimitation();
         setFormName('Import');
 
         setInputImporterName(name);
@@ -292,12 +286,12 @@ const Movements = () => {
                         hideDetails={hideDetails}
                     />
                 ) : null}
-                {limitation ? <StyledError>{limitation}</StyledError> : null}
                 {showMovements && movements.length > 0 ? (
                     <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
                 ) : null}
                 {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
             </StyledDataPart>
+            <Modal text={limitation} show={limitation} toggle={() => setLimitation()} />
         </StyledScreen>
     );
 };
