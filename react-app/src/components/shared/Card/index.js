@@ -1,8 +1,8 @@
-import { StyledLink, StyledError } from '../../styles.css';
+import { StyledLink, StyledError, StyledTitle } from '../../styles.css';
 import DataContainer from '../DataContainer';
 import StyledCard, { StyledCardElement, StyledValue, StyledLinkContainer } from './styles.css';
 
-const Card = ({ data, width, addImport, addExport, viewMovements, hideMovements, showMovements }) => {
+const Card = ({ data, width, addImport, addExport, hideMovements, showMovements, hideDetails, isMovementsShowed }) => {
     const getDataLabels = () => {
         const { id, ...props } = data.products[0];
         return Object.keys(props);
@@ -18,9 +18,10 @@ const Card = ({ data, width, addImport, addExport, viewMovements, hideMovements,
         <>
             {data ? (
                 <StyledCard width={width}>
-                    <StyledCardElement>
+                    {/* <StyledCardElement>
                         name: <StyledValue>{data.name}</StyledValue>
-                    </StyledCardElement>
+                    </StyledCardElement> */}
+                    <StyledTitle>{data.name}</StyledTitle>
                     <StyledCardElement>
                         type: <StyledValue>{data.type}</StyledValue>
                     </StyledCardElement>
@@ -37,15 +38,18 @@ const Card = ({ data, width, addImport, addExport, viewMovements, hideMovements,
                         <DataContainer labelData={getDataLabels()} data={getProductsData()} />
                     ) : null}
                     <StyledLinkContainer>
-                        <StyledLink onClick={() => addExport(data.id, data.type, data.products)}>add export</StyledLink>
-                        <StyledLink onClick={() => addImport(data.id, data.type, data.freeSpace)}>
+                        <StyledLink onClick={() => addExport(data.name, data.type, data.products)}>
+                            add export
+                        </StyledLink>
+                        <StyledLink onClick={() => addImport(data.name, data.type, data.freeSpace)}>
                             add import
                         </StyledLink>
-                        {showMovements ? (
+                        {isMovementsShowed ? (
                             <StyledLink onClick={hideMovements}>hide movements</StyledLink>
                         ) : (
-                            <StyledLink onClick={() => viewMovements(data.id)}>view movements</StyledLink>
+                            <StyledLink onClick={() => showMovements(data.id)}>view movements</StyledLink>
                         )}
+                        <StyledLink onClick={hideDetails}>hide details</StyledLink>
                     </StyledLinkContainer>
                 </StyledCard>
             ) : (

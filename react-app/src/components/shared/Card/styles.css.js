@@ -1,12 +1,16 @@
 import styled from 'styled-components';
 
 const StyledCard = styled('div')`
+    padding-top: 15px;
+    margin: 10px 0;
     width: ${(p) => p.width};
+    background: rgba(192, 192, 192, 0.1);
     display: flex;
     flex-direction: column;
 `;
 
 const StyledCardElement = styled('div')`
+    padding: 0 15px;
     height: 25px;
     width: 100%;
     box-sizing: border-box;
