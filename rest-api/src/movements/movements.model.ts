@@ -2,7 +2,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  DeletedAt,
   ForeignKey,
   Min,
   Model,
@@ -66,8 +65,4 @@ export class Movement extends Model {
 
   @BelongsTo(() => Product)
   product: Product;
-
-  @DeletedAt
-  @Column
-  deletedAt?: Date;
 }

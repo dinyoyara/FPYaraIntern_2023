@@ -1,7 +1,6 @@
 import {
   Column,
   DataType,
-  DeletedAt,
   HasMany,
   Model,
   PrimaryKey,
@@ -51,10 +50,6 @@ export class Product extends Model {
     type: DataType.ENUM(HAZARDOUS, NON_HAZARDOUS),
   })
   type: string;
-
-  @DeletedAt
-  @Column
-  deletedAt?: Date;
 
   @HasMany(() => Movement)
   movements: Movement[];

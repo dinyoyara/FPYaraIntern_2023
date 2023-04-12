@@ -2,7 +2,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  DeletedAt,
   ForeignKey,
   HasMany,
   Length,
@@ -57,10 +56,6 @@ export class Warehouse extends Model {
     },
   })
   customerId: string;
-
-  @DeletedAt
-  @Column
-  deletedAt?: Date;
 
   @BelongsTo(() => Customer)
   customer: Customer;
