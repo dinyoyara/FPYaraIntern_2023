@@ -62,6 +62,8 @@ const Movements = () => {
         console.log(exporterId, importerId, productId, inputCount, inputDate);
         const result = await createMovementAsync(exporterId, importerId, productId, inputCount, inputDate);
         if (result) {
+            getAllByCustomerAsync();
+            setShowDetails(false);
             clearForm();
         }
     };
@@ -118,6 +120,7 @@ const Movements = () => {
             correctWarehouses.unshift({ name: EXTERNAL });
             return correctWarehouses;
         });
+        setInputImporterName(EXTERNAL);
 
         setProductOptions(() => {
             return warehouseProducts.map((p) => ({ name: p.name }));
@@ -146,6 +149,7 @@ const Movements = () => {
             correctWarehouses.unshift({ name: EXTERNAL });
             return correctWarehouses;
         });
+        setInputExporterName(EXTERNAL);
 
         const correctProducts = type === UNKNOWN ? products : products.filter((x) => x.type === type);
         setProductOptions(() => {
@@ -174,14 +178,16 @@ const Movements = () => {
     };
 
     const getMovementsData = () => {
-        return movements.map((x) => ({
-            id: x.id,
-            exportedWarehouse: x.exportedWarehouse ? x.exportedWarehouse.name : EXTERNAL,
-            importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : EXTERNAL,
-            product: x.product.name,
-            productCount: x.productCount,
-            date: GetDateString(x.date)
-        }));
+        return movements
+            .sort((x) => x.date)
+            .map((x) => ({
+                id: x.id,
+                exportedWarehouse: x.exportedWarehouse ? x.exportedWarehouse.name : EXTERNAL,
+                importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : EXTERNAL,
+                product: x.product.name,
+                productCount: x.productCount,
+                date: GetDateString(x.date)
+            }));
     };
 
     // SET FORM ELEMENTS
