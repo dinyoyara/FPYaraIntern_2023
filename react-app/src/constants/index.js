@@ -7,7 +7,7 @@ export const UNKNOWN = 'unknown';
 
 export const EMPTY_STRING = '';
 export const WAREHOUSE_MIN_SIZE = 10;
-export const PRODUCT_MIN_SIZE = 0.1;
-export const PRODUCT_MIN_PRICE = 0.1;
+export const PRODUCT_MIN_SIZE = 1;
+export const PRODUCT_MIN_PRICE = 1;
 
 export const EXTERNAL = '-- external --';
