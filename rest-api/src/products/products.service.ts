@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
 import { Product } from './products.model';
@@ -12,7 +12,12 @@ export class ProductsService {
   ) {}
 
   createAsync = async (dto: ProductDto): Promise<Product> => {
-    return this.productModel.create({ ...dto });
+    try {
+      const product = await this.productModel.create({ ...dto });
+      return product;
+    } catch (error) {
+      throw new BadRequestException(error.errors[0].message);
+    }
   };
 
   getAllAsync = async (): Promise<Product[]> => {
