@@ -58,11 +58,12 @@ const Movements = () => {
         const importer = warehouses.find((x) => x.name === inputImporterName);
         const importerId = importer ? importer.id : null;
         const product = products.find((x) => x.name === inputProductName);
-        console.log(inputDate, inputCount, exporterId, importerId, product.id);
-        //const result = await createMovementAsync(exporterId, importerId, inputCount);
-        // if (result) {
-        //     clearForm();
-        // }
+        const productId = product.id;
+        console.log(exporterId, importerId, productId, inputCount, inputDate);
+        const result = await createMovementAsync(exporterId, importerId, productId, inputCount, inputDate);
+        if (result) {
+            clearForm();
+        }
     };
 
     const clearForm = () => {
