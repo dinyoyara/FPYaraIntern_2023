@@ -10,6 +10,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
 } from 'sequelize-typescript';
 
 import { Customer } from '../customers/customers.model';
@@ -30,6 +31,7 @@ export class Warehouse extends Model {
   })
   id: string;
 
+  @Unique
   @Length({ min: 3 })
   @Column
   name: string;
