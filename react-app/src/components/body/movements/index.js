@@ -9,12 +9,12 @@ import useMovementContext from '../../../context/movement/hook';
 import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
-import { UNKNOWN } from '../../../constants';
+import { UNKNOWN, EXTERNAL } from '../../../constants';
 import { GetDateString } from './helpers';
 
 const Movements = () => {
-    const [inputDate, setInputDate] = useState();
-    const [inputCount, setInputCount] = useState();
+    const [inputDate, setInputDate] = useState(new Date().toISOString().split('T')[0]);
+    const [inputCount, setInputCount] = useState(1);
     const [inputExporterName, setInputExporterName] = useState();
     const [inputImporterName, setInputImporterName] = useState();
     const [inputProductName, setInputProductName] = useState();
@@ -24,7 +24,6 @@ const Movements = () => {
 
     const [showDetails, setShowDetails] = useState(false);
     const [showMovements, setShowMovements] = useState(false);
-    const [showForm, setShowForm] = useState(false);
 
     const [exportOptions, setExportOptions] = useState([]);
     const [importOptions, setImportOptions] = useState([]);
@@ -36,14 +35,16 @@ const Movements = () => {
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
     const { products, getAllAsync } = useProductContext();
 
-    useEffect(() => {}, [warehouse, showForm]);
-
-    useEffect(() => {}, [warehouse, showForm, showMovements]);
-
     useEffect(() => {
         getAllByCustomerAsync();
+        getAllAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        setLimitation();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showDetails, showMovements]);
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
@@ -53,25 +54,27 @@ const Movements = () => {
 
     const handleCreate = async () => {
         const exporter = warehouses.find((x) => x.name === inputExporterName);
+        const exporterId = exporter ? exporter.id : null;
         const importer = warehouses.find((x) => x.name === inputImporterName);
+        const importerId = importer ? importer.id : null;
         const product = products.find((x) => x.name === inputProductName);
-        console.log(inputDate, exporter, importer, product);
+        console.log(inputDate, inputCount, exporterId, importerId, product.id);
         //const result = await createMovementAsync(exporterId, importerId, inputCount);
         // if (result) {
         //     clearForm();
         // }
     };
 
-    // const clearForm = () => {
-    //     setInputDate();
-    //     setInputCount();
-    //     setInputExporterName();
-    //     setInputImporterName();
-    //     setInputProductName();
-    //     setImportOptions([]);
-    //     setExportOptions([]);
-    //     setProductOptions([]);
-    // };
+    const clearForm = () => {
+        setInputDate(new Date().toISOString().split('T')[0]);
+        setInputCount(1);
+        setInputExporterName();
+        setInputImporterName();
+        setInputProductName();
+        setImportOptions([]);
+        setExportOptions([]);
+        setProductOptions([]);
+    };
 
     const handleShowDetails = async (id) => {
         const result = await getOneAsync(id);
@@ -93,51 +96,61 @@ const Movements = () => {
     };
 
     // IMPORT / EXPORT
-    const handleAddExport = (name, type, products) => {
+    const handleAddExport = (name, type, warehouseProducts) => {
         setShowMovements(false);
-        if (products.length === 0) {
+
+        if (warehouseProducts.length === 0) {
+            clearForm();
             setLimitation('no products to export');
             return;
         }
+        setLimitation();
         setFormName('Export');
+
         setInputExporterName(name);
         setExportOptions([{ name: name }]);
-        setProductOptions(() => {
-            return products.map((p) => ({ name: p.name }));
-        });
+
         setImportOptions(() => {
-            if (warehouses.length === 0) return [];
-            return warehouses
+            const correctWarehouses = warehouses
                 .filter((x) => x.name !== name && (x.type === type || x.type === UNKNOWN))
                 .map((x) => ({ name: x.name }));
+            correctWarehouses.unshift({ name: EXTERNAL });
+            return correctWarehouses;
         });
 
-        setShowForm(true);
+        setProductOptions(() => {
+            return warehouseProducts.map((p) => ({ name: p.name }));
+        });
+        setInputProductName(warehouseProducts[0].name);
     };
 
     const handleAddImport = async (name, type, freeSpace) => {
+        setShowMovements(false);
+
         if (freeSpace === 0) {
+            clearForm();
             setLimitation('no space for import');
             return;
         }
-
+        setLimitation();
         setFormName('Import');
+
         setInputImporterName(name);
         setImportOptions([{ name: name }]);
+
         setExportOptions(() => {
-            return warehouses
+            const correctWarehouses = warehouses
                 .filter((x) => x.name !== name && x.size > x.freeSpace && (type === UNKNOWN ? true : x.type === type))
                 .map((x) => ({ name: x.name }));
+            correctWarehouses.unshift({ name: EXTERNAL });
+            return correctWarehouses;
         });
-        setInputExporterName(exportOptions[0]);
-        await getAllAsync();
+
         const correctProducts = type === UNKNOWN ? products : products.filter((x) => x.type === type);
         setProductOptions(() => {
             return correctProducts.map((x) => ({ name: x.name }));
         });
-        setInputProductName(productOptions[0]);
-        setShowForm(true);
-        setShowMovements(false);
+        setInputProductName(correctProducts[0].name);
     };
 
     // SET WAREHOUSES DATA
@@ -162,8 +175,8 @@ const Movements = () => {
     const getMovementsData = () => {
         return movements.map((x) => ({
             id: x.id,
-            exportedWarehouse: x.exportedWarehouse ? x.exportedWarehouse.name : 'n/a',
-            importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : 'n/a',
+            exportedWarehouse: x.exportedWarehouse ? x.exportedWarehouse.name : EXTERNAL,
+            importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : EXTERNAL,
             product: x.product.name,
             productCount: x.productCount,
             date: GetDateString(x.date)
@@ -175,17 +188,17 @@ const Movements = () => {
         return [
             {
                 id: 'date',
-                value: inputDate,
                 type: 'date',
+                value: inputDate,
                 label: 'Date:',
                 height: formInputHeight,
                 onChange: (e) => handleOnChange(e, setInputDate, 'date')
             },
             {
-                id: 'size',
-                value: inputCount,
+                id: 'count',
                 type: 'number',
-                label: 'Size:',
+                value: inputCount,
+                label: 'Count:',
                 height: formInputHeight,
                 onChange: (e) => handleOnChange(e, setInputCount, 'count')
             }
@@ -228,6 +241,12 @@ const Movements = () => {
                 type: 'button',
                 active: formIsValid,
                 handleClick: handleCreate
+            },
+            {
+                text: 'Clear',
+                type: 'button',
+                active: true,
+                handleClick: clearForm
             }
         ];
     };
