@@ -1,12 +1,12 @@
 import { StyledLink } from '../../styles.css';
-import StyledModal from './styles.css';
+import StyledModal, { StyledText } from './styles.css';
 
 const Modal = ({ show, text, toggle }) => {
     return (
         <>
             {show ? (
                 <StyledModal>
-                    <div>{text}</div>
+                    <StyledText>{text}</StyledText>
                     <StyledLink onClick={toggle}>close</StyledLink>
                 </StyledModal>
             ) : null}
