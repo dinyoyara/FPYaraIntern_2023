@@ -79,12 +79,20 @@ export class WarehousesService {
     id: string,
     customerId: string,
   ): Promise<Warehouse> => {
-    const warehouse = await this.warehouseModel.findByPk(id);
-    if (warehouse.customerId != customerId) {
-      throw new ForbiddenException('not authorized');
+    try {
+      const warehouseWithProducts = await this.getOneDetails(id);
+      if (warehouseWithProducts.products.length > 0) {
+        throw new BadRequestException('warehouse has products');
+      }
+      const warehouse = await this.warehouseModel.findByPk(id);
+      if (warehouse.customerId != customerId) {
+        throw new ForbiddenException('not authorized');
+      }
+      warehouse.destroy();
+      return warehouse;
+    } catch (error) {
+      throw new BadRequestException(error.errors[0].message);
     }
-    warehouse.destroy();
-    return warehouse;
   };
 
   getOneDetails = async (id: string): Promise<WarehouseWithProductDto> => {
@@ -154,12 +162,6 @@ export class WarehousesService {
 
     const result = await this.mathService.calculateAsync(expr);
 
-    console.log('---------------------------------');
-    console.log(`--- free space --- ${expr} ----`);
-    console.log('---------------------------------');
-    console.log(`--- result --- ${result} ----`);
-    console.log('---------------------------------');
-
     return result;
   };
 
@@ -177,9 +179,7 @@ export class WarehousesService {
   ): Promise<ProductInfoModel> => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { expr, ...product } = productDto;
-    console.log('---------------------------------');
-    console.log(`--- product count --- ${expr} ----`);
-    console.log('---------------------------------');
+
     return {
       ...product,
       count: await this.mathService.calculateAsync(expr),
