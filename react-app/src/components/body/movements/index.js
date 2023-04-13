@@ -285,13 +285,15 @@ const Movements = () => {
     // JSX
     return (
         <StyledScreen>
-            <Form
-                selectsInfo={getFormSelects()}
-                inputsInfo={getFormInputs()}
-                buttonsInfo={getFormButtons()}
-                title={formName}
-                error={error}
-            />
+            <StyledDataPart width='30%'>
+                <Form
+                    selectsInfo={getFormSelects()}
+                    inputsInfo={getFormInputs()}
+                    buttonsInfo={getFormButtons()}
+                    title={formName}
+                    error={error}
+                />
+            </StyledDataPart>
 
             <StyledDataPart width='65%'>
                 {!showMovements && warehouses.length > 0 ? (

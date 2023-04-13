@@ -108,13 +108,15 @@ const Products = () => {
 
     return (
         <StyledScreen>
-            <Form
-                selectsInfo={getFormSelects()}
-                inputsInfo={getFormInputs()}
-                buttonsInfo={getFormButtons()}
-                title='Create Product'
-                error={error}
-            />
+            <StyledDataPart width='30%'>
+                <Form
+                    selectsInfo={getFormSelects()}
+                    inputsInfo={getFormInputs()}
+                    buttonsInfo={getFormButtons()}
+                    title='Create Product'
+                    error={error}
+                />
+            </StyledDataPart>
             <StyledDataPart width='60%'>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
                 {showProducts && products.length > 0 ? (
