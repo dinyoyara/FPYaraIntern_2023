@@ -8,7 +8,7 @@ function WarehouseProvider({ children }) {
     const [warehouses, setWarehouses] = useState([]);
     const [warehouse, setWarehouse] = useState();
     const [exporter, setExporter] = useState();
-    const [error, setError] = useState();
+    const [error, setError] = useState('');
 
     const createWarehouseAsync = async (name, size, type) => {
         try {

@@ -29,6 +29,11 @@ const Warehouses = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        clearError();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [edit, inputName]);
+
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
         clearError();

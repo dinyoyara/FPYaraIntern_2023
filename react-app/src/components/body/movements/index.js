@@ -55,13 +55,11 @@ const Movements = () => {
         const importedWh = warehouses.find((x) => x.name === inputImporterName);
         const importedWhId = importedWh ? importedWh.id : null;
         const product = products.find((x) => x.name === inputProductName);
-        const productId = product.id;
-        //console.log(exporterId, importerId, productId, inputCount, inputDate);
 
         const isCountValid = await validateProductCount(exportedWh, importedWh, product, inputCount);
         if (!isCountValid) return;
 
-        const result = await createMovementAsync(exportedWhId, importedWhId, productId, inputCount, inputDate);
+        const result = await createMovementAsync(exportedWhId, importedWhId, product.Id, inputCount, inputDate);
 
         if (result) {
             getAllByCustomerAsync();
@@ -71,18 +69,20 @@ const Movements = () => {
     };
 
     const validateProductCount = async (exportedWr, importedWr, product, count) => {
+        //validate count in Importer
         const productsSpace = product.size * count;
         if (importedWr && importedWr.freeSpace < productsSpace) {
             setLimitation('no space for this count');
             return false;
         }
+
+        //validate count in Exporter
         if (!exportedWr) {
             return true;
         }
         await getExporterAsync(exportedWr.id);
-        console.log(exporter);
         const productInExporter = exporter.products.find((x) => x.name === product.name);
-        console.log(productInExporter);
+
         if (!productInExporter) {
             setLimitation('no such a product in exporter');
             return false;
