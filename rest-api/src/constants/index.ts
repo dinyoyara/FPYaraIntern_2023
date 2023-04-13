@@ -3,6 +3,7 @@ export const NON_HAZARDOUS = 'non-hazardous';
 export const UNKNOWN = 'unknown';
 
 export const WAREHOUSE_MIN_SIZE = 10;
+export const NAME_MIN_LENGTH = 3;
 export const PRODUCT_MIN_SIZE = 1;
 export const PRODUCT_MIN_PRICE = 1;
 

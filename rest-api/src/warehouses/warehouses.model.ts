@@ -14,6 +14,7 @@ import {
 
 import { Customer } from '../customers/customers.model';
 import {
+  NAME_MIN_LENGTH,
   HAZARDOUS,
   NON_HAZARDOUS,
   UNKNOWN,
@@ -31,7 +32,7 @@ export class Warehouse extends Model {
   id: string;
 
   @Unique
-  @Length({ min: 3 })
+  @Length({ min: NAME_MIN_LENGTH })
   @Column
   name: string;
 

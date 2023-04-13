@@ -12,6 +12,7 @@ import {
 } from 'sequelize-typescript';
 
 import {
+  NAME_MIN_LENGTH,
   PRODUCT_MIN_SIZE,
   PRODUCT_MIN_PRICE,
   HAZARDOUS,
@@ -29,7 +30,7 @@ export class Product extends Model {
   id: string;
 
   @Unique
-  @Length({ min: 3 })
+  @Length({ min: NAME_MIN_LENGTH })
   @Column
   name: string;
 
