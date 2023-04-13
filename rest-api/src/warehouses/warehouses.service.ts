@@ -63,6 +63,13 @@ export class WarehousesService {
       if (warehouse.customerId != customerId) {
         throw new ForbiddenException('not authorized');
       }
+      const warehouseWithProducts = await this.getOneDetails(id);
+      if (
+        warehouseWithProducts.products.length > 0 &&
+        warehouseWithProducts.type !== dto.type
+      ) {
+        throw new BadRequestException('not allowed to change type');
+      }
       await this.warehouseModel.update(
         { ...dto },
         {
@@ -71,6 +78,12 @@ export class WarehousesService {
       );
       return this.warehouseModel.findByPk(id);
     } catch (error) {
+      if (
+        error.response.statusCode === 400 ||
+        error.response.statusCode === 403
+      ) {
+        throw error;
+      }
       throw new BadRequestException(error.errors[0].message);
     }
   };
@@ -91,6 +104,12 @@ export class WarehousesService {
       warehouse.destroy();
       return warehouse;
     } catch (error) {
+      if (
+        error.response.statusCode === 400 ||
+        error.response.statusCode === 403
+      ) {
+        throw error;
+      }
       throw new BadRequestException(error.errors[0].message);
     }
   };
