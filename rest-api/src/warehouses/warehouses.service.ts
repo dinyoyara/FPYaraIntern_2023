@@ -12,6 +12,7 @@ import { Warehouse } from './warehouses.model';
 import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
 import { ProductInfoModel, ProductWithExprMode } from '../products/models';
+import { UNKNOWN } from 'src/constants';
 
 @Injectable()
 export class WarehousesService {
@@ -53,6 +54,11 @@ export class WarehousesService {
     );
   };
 
+  getOneAsync = async (id: string): Promise<WarehouseInfoDto> => {
+    const warehouse = await this.warehouseModel.findByPk(id);
+    return await this.warehouseToWarehouseInfoDtoAsync(warehouse);
+  };
+
   updateAsync = async (
     id: string,
     customerId: string,
@@ -66,7 +72,8 @@ export class WarehousesService {
       const warehouseWithProducts = await this.getOneDetails(id);
       if (
         warehouseWithProducts.products.length > 0 &&
-        warehouseWithProducts.type !== dto.type
+        warehouseWithProducts.type !== dto.type &&
+        warehouseWithProducts.type !== UNKNOWN
       ) {
         throw new BadRequestException('not allowed to change type');
       }
@@ -93,8 +100,8 @@ export class WarehousesService {
     customerId: string,
   ): Promise<Warehouse> => {
     try {
-      const warehouseWithProducts = await this.getOneDetails(id);
-      if (warehouseWithProducts.products.length > 0) {
+      const warehouseWithFreeSpace = await this.getOneAsync(id);
+      if (warehouseWithFreeSpace.freeSpace < warehouseWithFreeSpace.size) {
         throw new BadRequestException('warehouse has products');
       }
       const warehouse = await this.warehouseModel.findByPk(id);
