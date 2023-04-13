@@ -107,8 +107,11 @@ const Movements = () => {
         if (!exportedWr) {
             return true;
         }
-        await getExporterAsync(exportedWr.id);
-
+        const result = await getExporterAsync(exportedWr.id);
+        if (!result) {
+            setLimitation('something unexpected happened, try again');
+            return false;
+        }
         const productInExporter = exporter.products.find((x) => x.name === product.name);
 
         if (!productInExporter) {
