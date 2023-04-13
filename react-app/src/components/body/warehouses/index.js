@@ -4,7 +4,14 @@ import Form from '../../shared/Form';
 import DataContainer from '../../shared/DataContainer';
 import { formInputHeight } from '../../../styles/const';
 import useWarehouseContext from '../../../context/warehouse/hook';
-import { HAZARDOUS, NON_HAZARDOUS, UNKNOWN, EMPTY_STRING, WAREHOUSE_MIN_SIZE } from '../../../constants';
+import {
+    HAZARDOUS,
+    NON_HAZARDOUS,
+    UNKNOWN,
+    EMPTY_STRING,
+    WAREHOUSE_MIN_SIZE,
+    NAME_MIN_LENGTH
+} from '../../../constants';
 import { StyledScreen, StyledDataPart } from '../styles.css';
 import { StyledError } from '../../styles.css';
 import Modal from '../../shared/Modal';
@@ -17,9 +24,10 @@ const Warehouses = () => {
     const [editedId, setEditedId] = useState();
     const [edit, setEdit] = useState(false);
 
-    const [limitation, setLimitation] = useState();
+    const [fieldsErrors, setFieldsErrors] = useState({ inputName: '', inputSize: '' });
+    const [formIsValid, setFormIsValid] = useState(false);
 
-    const [formIsValid, setFormIsValid] = useState(true);
+    const [limitation, setLimitation] = useState();
 
     const { warehouses, error, createWarehouseAsync, getAllByCustomerAsync, clearError, deleteAsync, updateAsync } =
         useWarehouseContext();
@@ -30,14 +38,47 @@ const Warehouses = () => {
     }, []);
 
     useEffect(() => {
+        setFieldsErrors({ inputName: '', inputSize: '' });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [edit]);
+
+    useEffect(() => {
         clearError();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [edit, inputName]);
 
+    useEffect(() => {
+        checkFormIsValid();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inputName, inputSize, selectType]);
+
+    const validateField = (fieldName, value) => {
+        const currentErrors = { ...fieldsErrors };
+        currentErrors[fieldName] = '';
+        switch (fieldName) {
+            case 'inputSize':
+                if (value < WAREHOUSE_MIN_SIZE) currentErrors[fieldName] = `size should be above ${WAREHOUSE_MIN_SIZE}`;
+                break;
+            case 'inputName':
+                if (value.length < NAME_MIN_LENGTH)
+                    currentErrors[fieldName] = `name should be more that ${NAME_MIN_LENGTH} symbols`;
+                break;
+            default:
+                break;
+        }
+        setFieldsErrors(currentErrors);
+    };
+
+    const checkFormIsValid = () => {
+        const validValues = fieldsErrors.inputSize === '' && fieldsErrors.inputName === '';
+        const notEmptyValues = inputName !== EMPTY_STRING;
+        setFormIsValid(validValues && notEmptyValues);
+    };
+
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
         clearError();
-        // validateField(fieldName, event.target.value);
+        validateField(fieldName, event.target.value);
     };
 
     const handleCreate = async () => {
@@ -93,7 +134,7 @@ const Warehouses = () => {
                 type: 'text',
                 label: 'Name:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputName, 'name')
+                onChange: (e) => handleOnChange(e, setInputName, 'inputName')
             },
             {
                 id: 'size',
@@ -101,7 +142,7 @@ const Warehouses = () => {
                 type: 'number',
                 label: 'Size:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputSize, 'size')
+                onChange: (e) => handleOnChange(e, setInputSize, 'inputSize')
             }
         ];
     };
@@ -112,7 +153,7 @@ const Warehouses = () => {
                 id: 'type',
                 defaultValue: selectType,
                 label: 'Type:',
-                onChange: (e) => handleOnChange(e, setSelectType, 'type'),
+                onChange: (e) => handleOnChange(e, setSelectType, 'selectType'),
                 height: formInputHeight,
                 options: [{ name: HAZARDOUS }, { name: NON_HAZARDOUS }, { name: UNKNOWN }]
             }
@@ -131,7 +172,7 @@ const Warehouses = () => {
             buttons.push({
                 text: 'Return to Create',
                 type: 'button',
-                active: formIsValid,
+                active: true,
                 handleClick: handleStopEdit
             });
         } else {
@@ -161,13 +202,17 @@ const Warehouses = () => {
     //JSX
     return (
         <StyledScreen>
-            <Form
-                selectsInfo={getFormSelects()}
-                inputsInfo={getFormInputs()}
-                buttonsInfo={getFormButtons()}
-                title={edit ? 'Edit Warehouse' : 'Create Warehouse'}
-                error={error}
-            />
+            <StyledDataPart width='30%'>
+                <Form
+                    selectsInfo={getFormSelects()}
+                    inputsInfo={getFormInputs()}
+                    buttonsInfo={getFormButtons()}
+                    title={edit ? 'Edit Warehouse' : 'Create Warehouse'}
+                    error={error}
+                />
+                {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
+                {fieldsErrors.inputSize ? <StyledError>{fieldsErrors.inputSize}</StyledError> : null}
+            </StyledDataPart>
             <StyledDataPart width='60%'>
                 {warehouses.length > 0 ? (
                     <DataContainer
