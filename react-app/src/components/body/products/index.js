@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 
 import { formInputHeight } from '../../../styles/const';
-import { HAZARDOUS, NON_HAZARDOUS, EMPTY_STRING, PRODUCT_MIN_PRICE, PRODUCT_MIN_SIZE } from '../../../constants';
+import {
+    HAZARDOUS,
+    NON_HAZARDOUS,
+    EMPTY_STRING,
+    PRODUCT_MIN_PRICE,
+    PRODUCT_MIN_SIZE,
+    NAME_MIN_LENGTH
+} from '../../../constants';
 import Form from '../../shared/Form';
 import useProductContext from '../../../context/product/hook';
 import { StyledError, StyledLink } from '../../styles.css';
@@ -15,7 +22,8 @@ const Products = () => {
     const [selectType, setSelectType] = useState(NON_HAZARDOUS);
     const [showProducts, setShowProducts] = useState(false);
 
-    const [formIsValid, setFormIsValid] = useState(true);
+    const [fieldsErrors, setFieldsErrors] = useState({ inputName: '', inputSize: '', inputPrice: '' });
+    const [formIsValid, setFormIsValid] = useState(false);
 
     const { products, error, createProductAsync, getAllAsync, clearError } = useProductContext();
 
@@ -24,10 +32,42 @@ const Products = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        checkFormIsValid();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inputName, inputSize, selectType, inputPrice]);
+
+    const validateField = (fieldName, value) => {
+        const currentErrors = { ...fieldsErrors };
+        currentErrors[fieldName] = '';
+        switch (fieldName) {
+            case 'inputSize':
+                if (value < PRODUCT_MIN_SIZE) currentErrors[fieldName] = `size should be above ${PRODUCT_MIN_SIZE}`;
+                break;
+            case 'inputPrice':
+                if (value < PRODUCT_MIN_PRICE) currentErrors[fieldName] = `price should be above ${PRODUCT_MIN_PRICE}`;
+                break;
+            case 'inputName':
+                if (value.length < NAME_MIN_LENGTH)
+                    currentErrors[fieldName] = `name should be more that ${NAME_MIN_LENGTH} symbols`;
+                break;
+            default:
+                break;
+        }
+        setFieldsErrors(currentErrors);
+    };
+
+    const checkFormIsValid = () => {
+        const validValues =
+            fieldsErrors.inputSize === '' && fieldsErrors.inputName === '' && fieldsErrors.inputPrice === '';
+        const notEmptyValues = inputName !== EMPTY_STRING;
+        setFormIsValid(validValues && notEmptyValues);
+    };
+
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
         clearError();
-        // validateField(fieldName, event.target.value);
+        validateField(fieldName, event.target.value);
     };
 
     const handleCreate = async () => {
@@ -56,7 +96,7 @@ const Products = () => {
                 type: 'text',
                 label: 'Name:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputName, 'name')
+                onChange: (e) => handleOnChange(e, setInputName, 'inputName')
             },
             {
                 id: 'price',
@@ -64,7 +104,7 @@ const Products = () => {
                 type: 'number',
                 label: 'Price:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputPrice, 'price')
+                onChange: (e) => handleOnChange(e, setInputPrice, 'inputPrice')
             },
             {
                 id: 'size',
@@ -72,7 +112,7 @@ const Products = () => {
                 type: 'number',
                 label: 'Size:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputSize, 'size')
+                onChange: (e) => handleOnChange(e, setInputSize, 'inputSize')
             }
         ];
     };
@@ -116,6 +156,9 @@ const Products = () => {
                     title='Create Product'
                     error={error}
                 />
+                {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
+                {fieldsErrors.inputPrice ? <StyledError>{fieldsErrors.inputPrice}</StyledError> : null}
+                {fieldsErrors.inputSize ? <StyledError>{fieldsErrors.inputSize}</StyledError> : null}
             </StyledDataPart>
             <StyledDataPart width='60%'>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
