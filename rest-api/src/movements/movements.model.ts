@@ -34,6 +34,7 @@ export class Movement extends Model {
       model: Warehouse,
       key: 'id',
     },
+    onDelete: 'SET NULL',
   })
   exportedWarehouseId: string;
 
@@ -47,6 +48,7 @@ export class Movement extends Model {
       model: Warehouse,
       key: 'id',
     },
+    onDelete: 'SET NULL',
   })
   importedWarehouseId: string;
 
