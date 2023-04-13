@@ -10,7 +10,7 @@ import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 import { UNKNOWN, EXTERNAL } from '../../../constants';
-import { GetDateString } from './helpers';
+import { getDateString, isValueInteger } from './helpers';
 import Modal from '../../shared/Modal';
 
 const Movements = () => {
@@ -20,7 +20,9 @@ const Movements = () => {
     const [inputImporterName, setInputImporterName] = useState();
     const [inputProductName, setInputProductName] = useState();
 
+    const [fieldsErrors, setFieldsErrors] = useState({ inputCount: '' });
     const [formIsValid, setFormIsValid] = useState(true);
+
     const [limitation, setLimitation] = useState();
 
     const [showDetails, setShowDetails] = useState(false);
@@ -43,10 +45,35 @@ const Movements = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        checkFormIsValid();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [inputCount, inputExporterName, inputImporterName, inputProductName]);
+
+    const validateField = (fieldName, value) => {
+        const currentErrors = { ...fieldsErrors };
+        currentErrors[fieldName] = '';
+        switch (fieldName) {
+            case 'inputCount':
+                if (value < 1 || !isValueInteger(value))
+                    currentErrors[fieldName] = `size should be positive and integer`;
+                break;
+            default:
+                break;
+        }
+        setFieldsErrors(currentErrors);
+    };
+
+    const checkFormIsValid = () => {
+        const validValues = fieldsErrors.inputCount === '';
+        const notEmptyValues = inputExporterName && inputImporterName && inputProductName;
+        setFormIsValid(validValues && notEmptyValues);
+    };
+
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
         clearError();
-        // validateField(fieldName, event.target.value);
+        validateField(fieldName, event.target.value);
     };
 
     const handleCreate = async () => {
@@ -59,7 +86,7 @@ const Movements = () => {
         const isCountValid = await validateProductCount(exportedWh, importedWh, product, inputCount);
         if (!isCountValid) return;
 
-        const result = await createMovementAsync(exportedWhId, importedWhId, product.Id, inputCount, inputDate);
+        const result = await createMovementAsync(exportedWhId, importedWhId, product.id, inputCount, inputDate);
 
         if (result) {
             getAllByCustomerAsync();
@@ -81,6 +108,7 @@ const Movements = () => {
             return true;
         }
         await getExporterAsync(exportedWr.id);
+
         const productInExporter = exporter.products.find((x) => x.name === product.name);
 
         if (!productInExporter) {
@@ -127,8 +155,8 @@ const Movements = () => {
     // IMPORT / EXPORT
     const handleAddExport = (name, type, warehouseProducts) => {
         setShowMovements(false);
-
-        if (warehouseProducts.length === 0) {
+        const exportedWh = warehouses.find((x) => x.name === name);
+        if (exportedWh.size === exportedWh.freeSpace) {
             clearForm();
             setLimitation('no products to export');
             return;
@@ -210,7 +238,7 @@ const Movements = () => {
                 importedWarehouse: x.importedWarehouse ? x.importedWarehouse.name : EXTERNAL,
                 product: x.product.name,
                 productCount: x.productCount,
-                date: GetDateString(x.date)
+                date: getDateString(x.date)
             }));
     };
 
@@ -223,7 +251,7 @@ const Movements = () => {
                 value: inputDate,
                 label: 'Date:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputDate, 'date')
+                onChange: (e) => handleOnChange(e, setInputDate, 'inputDate')
             },
             {
                 id: 'count',
@@ -231,7 +259,7 @@ const Movements = () => {
                 value: inputCount,
                 label: 'Count:',
                 height: formInputHeight,
-                onChange: (e) => handleOnChange(e, setInputCount, 'count')
+                onChange: (e) => handleOnChange(e, setInputCount, 'inputCount')
             }
         ];
     };
@@ -242,7 +270,7 @@ const Movements = () => {
                 id: 'export',
                 defaultValue: inputExporterName,
                 label: 'Export from:',
-                onChange: (e) => handleOnChange(e, setInputExporterName, 'export'),
+                onChange: (e) => handleOnChange(e, setInputExporterName, 'inputExporterName'),
                 height: formInputHeight,
                 options: exportOptions
             },
@@ -250,7 +278,7 @@ const Movements = () => {
                 id: 'import',
                 defaultValue: inputImporterName,
                 label: 'Import to:',
-                onChange: (e) => handleOnChange(e, setInputImporterName, 'import'),
+                onChange: (e) => handleOnChange(e, setInputImporterName, 'inputExporterName'),
                 height: formInputHeight,
                 options: importOptions
             },
@@ -258,7 +286,7 @@ const Movements = () => {
                 id: 'product',
                 defaultValue: inputProductName,
                 label: 'Product:',
-                onChange: (e) => handleOnChange(e, setInputProductName, 'product'),
+                onChange: (e) => handleOnChange(e, setInputProductName, 'inputProductName'),
                 height: formInputHeight,
                 options: productOptions
             }
@@ -293,6 +321,7 @@ const Movements = () => {
                     title={formName}
                     error={error}
                 />
+                {fieldsErrors.inputCount ? <StyledError>{fieldsErrors.inputCount}</StyledError> : null}
             </StyledDataPart>
 
             <StyledDataPart width='65%'>
