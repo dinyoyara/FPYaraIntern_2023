@@ -32,7 +32,8 @@ const Movements = () => {
 
     const [formName, setFormName] = useState('Import / Export');
 
-    const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
+    const { warehouse, exporter, warehouses, getAllByCustomerAsync, getOneAsync, getExporterAsync } =
+        useWarehouseContext();
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
     const { products, getAllAsync } = useProductContext();
 
@@ -49,19 +50,48 @@ const Movements = () => {
     };
 
     const handleCreate = async () => {
-        const exporter = warehouses.find((x) => x.name === inputExporterName);
-        const exporterId = exporter ? exporter.id : null;
-        const importer = warehouses.find((x) => x.name === inputImporterName);
-        const importerId = importer ? importer.id : null;
+        const exportedWh = warehouses.find((x) => x.name === inputExporterName);
+        const exportedWhId = exportedWh ? exportedWh.id : null;
+        const importedWh = warehouses.find((x) => x.name === inputImporterName);
+        const importedWhId = importedWh ? importedWh.id : null;
         const product = products.find((x) => x.name === inputProductName);
         const productId = product.id;
-        console.log(exporterId, importerId, productId, inputCount, inputDate);
-        const result = await createMovementAsync(exporterId, importerId, productId, inputCount, inputDate);
+        //console.log(exporterId, importerId, productId, inputCount, inputDate);
+
+        const isCountValid = await validateProductCount(exportedWh, importedWh, product, inputCount);
+        if (!isCountValid) return;
+
+        const result = await createMovementAsync(exportedWhId, importedWhId, productId, inputCount, inputDate);
+
         if (result) {
             getAllByCustomerAsync();
             setShowDetails(false);
             clearForm();
         }
+    };
+
+    const validateProductCount = async (exportedWr, importedWr, product, count) => {
+        const productsSpace = product.size * count;
+        if (importedWr && importedWr.freeSpace < productsSpace) {
+            setLimitation('no space for this count');
+            return false;
+        }
+        if (!exportedWr) {
+            return true;
+        }
+        await getExporterAsync(exportedWr.id);
+        console.log(exporter);
+        const productInExporter = exporter.products.find((x) => x.name === product.name);
+        console.log(productInExporter);
+        if (!productInExporter) {
+            setLimitation('no such a product in exporter');
+            return false;
+        } else if (productInExporter.count < count) {
+            setLimitation('no such a count in exporter');
+            return false;
+        }
+
+        return true;
     };
 
     const clearForm = () => {
