@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import Form from '../../shared/Form';
-import DataContainer from '../../shared/DataContainer';
-import { formInputHeight } from '../../../styles/const';
-import useWarehouseContext from '../../../context/warehouse/hook';
 import {
     HAZARDOUS,
     NON_HAZARDOUS,
@@ -12,9 +8,13 @@ import {
     WAREHOUSE_MIN_SIZE,
     NAME_MIN_LENGTH
 } from '../../../constants';
-import { StyledScreen, StyledDataPart } from '../styles.css';
-import { StyledError } from '../../styles.css';
+import Form from '../../shared/Form';
 import Modal from '../../shared/Modal';
+import { StyledError } from '../../styles.css';
+import DataContainer from '../../shared/DataContainer';
+import { formInputHeight } from '../../../styles/const';
+import { StyledScreen, StyledDataPart } from '../styles.css';
+import useWarehouseContext from '../../../context/warehouse/hook';
 
 const Warehouses = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
@@ -24,10 +24,10 @@ const Warehouses = () => {
     const [editedId, setEditedId] = useState();
     const [edit, setEdit] = useState(false);
 
-    const [fieldsErrors, setFieldsErrors] = useState({ inputName: '', inputSize: '' });
+    const [fieldsErrors, setFieldsErrors] = useState({ inputName: EMPTY_STRING, inputSize: EMPTY_STRING });
     const [formIsValid, setFormIsValid] = useState(false);
 
-    const [limitation, setLimitation] = useState();
+    const [limitation, setLimitation] = useState(EMPTY_STRING);
 
     const { warehouses, error, createWarehouseAsync, getAllByCustomerAsync, clearError, deleteAsync, updateAsync } =
         useWarehouseContext();
@@ -38,7 +38,7 @@ const Warehouses = () => {
     }, []);
 
     useEffect(() => {
-        setFieldsErrors({ inputName: '', inputSize: '' });
+        setFieldsErrors({ inputName: EMPTY_STRING, inputSize: EMPTY_STRING });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [edit]);
 
@@ -54,7 +54,7 @@ const Warehouses = () => {
 
     const validateField = (fieldName, value) => {
         const currentErrors = { ...fieldsErrors };
-        currentErrors[fieldName] = '';
+        currentErrors[fieldName] = EMPTY_STRING;
         switch (fieldName) {
             case 'inputSize':
                 if (value < WAREHOUSE_MIN_SIZE) currentErrors[fieldName] = `size should be above ${WAREHOUSE_MIN_SIZE}`;
@@ -70,7 +70,7 @@ const Warehouses = () => {
     };
 
     const checkFormIsValid = () => {
-        const validValues = fieldsErrors.inputSize === '' && fieldsErrors.inputName === '';
+        const validValues = fieldsErrors.inputSize === EMPTY_STRING && fieldsErrors.inputName === EMPTY_STRING;
         const notEmptyValues = inputName !== EMPTY_STRING;
         setFormIsValid(validValues && notEmptyValues);
     };
@@ -133,6 +133,7 @@ const Warehouses = () => {
                 value: inputName,
                 type: 'text',
                 label: 'Name:',
+                placeholder: 'Enter warehouse name here',
                 height: formInputHeight,
                 onChange: (e) => handleOnChange(e, setInputName, 'inputName')
             },
@@ -141,6 +142,7 @@ const Warehouses = () => {
                 value: inputSize,
                 type: 'number',
                 label: 'Size:',
+                placeholder: 'Enter warehouse size here',
                 height: formInputHeight,
                 onChange: (e) => handleOnChange(e, setInputSize, 'inputSize')
             }
@@ -225,7 +227,7 @@ const Warehouses = () => {
                     <StyledError>No warehouses</StyledError>
                 )}
             </StyledDataPart>
-            <Modal text={limitation} show={limitation} toggle={() => setLimitation()} />
+            <Modal text={limitation} show={limitation} toggle={() => setLimitation(EMPTY_STRING)} />
         </StyledScreen>
     );
 };
