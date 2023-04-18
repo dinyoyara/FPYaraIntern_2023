@@ -7,7 +7,7 @@ const StyledGreeting = styled('div')`
     text-align: center;
 `;
 
-const StyledAuthForm = styled('form')`
+const StyledAuthForm = styled('div')`
     height: ${(p) => p.height};
     width: 300px;
     margin: 0 auto;
