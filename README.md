@@ -2,7 +2,8 @@
 
 Database diagram :
 
-![db_diagram](https://user-images.githubusercontent.com/124030196/231781987-2cb5b579-089f-44ce-9561-d78911662996.png)
+![db_diagram_last](https://user-images.githubusercontent.com/124030196/232689096-86e3582f-3aeb-42c9-b81e-976e923f1694.png)
+
 
 ## Installation
 
