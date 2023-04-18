@@ -22,7 +22,6 @@ function CustomerProvider({ children }) {
             await axiosClient.post(`auth/signup`, { name, email, password });
             return true;
         } catch (error) {
-            console.log(error);
             setError(error.response.data.message);
             return false;
         }
@@ -38,7 +37,6 @@ function CustomerProvider({ children }) {
             setCustomer(getCustomerFromJWT());
             setError(null);
         } catch (error) {
-            console.log(error);
             setError(error.response.data.message);
         }
     };

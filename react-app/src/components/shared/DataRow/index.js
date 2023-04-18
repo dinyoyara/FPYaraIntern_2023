@@ -5,7 +5,7 @@ const DataRow = ({ data, actions, width }) => {
     return (
         <StyledDataRow>
             {Object.values(restData).map((x, i) => (
-                <StyledData key={i} width={width}>
+                <StyledData key={i * 50} width={width}>
                     {x}
                 </StyledData>
             ))}
