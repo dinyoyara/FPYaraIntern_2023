@@ -9,11 +9,11 @@ import { formInputHeight } from '../../../../styles/const';
 import useCustomerContext from '../../../../context/customer/hook';
 
 const LoginForm = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState(EMPTY_STRING);
+    const [password, setPassword] = useState(EMPTY_STRING);
 
     const [formIsValid, setFormIsValid] = useState(false);
-    const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '' });
+    const [fieldsErrors, setFieldsErrors] = useState({ email: EMPTY_STRING, password: EMPTY_STRING });
 
     const { signinAsync, clearError, error } = useCustomerContext();
 
@@ -24,7 +24,7 @@ const LoginForm = () => {
 
     const validateField = (fieldName, value) => {
         const currentErrors = { ...fieldsErrors };
-        currentErrors[fieldName] = '';
+        currentErrors[fieldName] = EMPTY_STRING;
         switch (fieldName) {
             case 'email':
                 if (!isEmailValid(value)) currentErrors[fieldName] = `invalid email address`;
@@ -39,7 +39,7 @@ const LoginForm = () => {
     };
 
     const checkFormIsValid = () => {
-        const validValues = fieldsErrors.email === '' && fieldsErrors.password === '';
+        const validValues = fieldsErrors.email === EMPTY_STRING && fieldsErrors.password === EMPTY_STRING;
         const notEmptyValues = email !== EMPTY_STRING && password !== EMPTY_STRING;
         setFormIsValid(validValues && notEmptyValues);
     };

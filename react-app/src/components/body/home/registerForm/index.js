@@ -9,12 +9,16 @@ import { formInputHeight } from '../../../../styles/const';
 import useCustomerContext from '../../../../context/customer/hook';
 
 const RegisterForm = ({ goToLogin }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [name, setName] = useState(EMPTY_STRING);
+    const [email, setEmail] = useState(EMPTY_STRING);
+    const [password, setPassword] = useState(EMPTY_STRING);
 
     const [formIsValid, setFormIsValid] = useState(false);
-    const [fieldsErrors, setFieldsErrors] = useState({ email: '', password: '', name: '' });
+    const [fieldsErrors, setFieldsErrors] = useState({
+        email: EMPTY_STRING,
+        password: EMPTY_STRING,
+        name: EMPTY_STRING
+    });
 
     const { signupAsync, error, clearError } = useCustomerContext();
 
@@ -25,7 +29,7 @@ const RegisterForm = ({ goToLogin }) => {
 
     const validateField = (fieldName, value) => {
         const currentErrors = { ...fieldsErrors };
-        currentErrors[fieldName] = '';
+        currentErrors[fieldName] = EMPTY_STRING;
         switch (fieldName) {
             case 'name':
                 if (value.length < 2) currentErrors[fieldName] = `name should be more that 1 symbols`;
@@ -43,7 +47,10 @@ const RegisterForm = ({ goToLogin }) => {
     };
 
     const checkFormIsValid = () => {
-        const validValues = fieldsErrors.email === '' && fieldsErrors.password === '' && fieldsErrors.name === '';
+        const validValues =
+            fieldsErrors.email === EMPTY_STRING &&
+            fieldsErrors.password === EMPTY_STRING &&
+            fieldsErrors.name === EMPTY_STRING;
         const notEmptyValues = email !== EMPTY_STRING && password !== EMPTY_STRING && name !== EMPTY_STRING;
         setFormIsValid(validValues && notEmptyValues);
     };
