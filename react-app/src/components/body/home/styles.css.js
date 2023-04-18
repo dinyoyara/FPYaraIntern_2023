@@ -7,4 +7,15 @@ const StyledGreeting = styled('div')`
     text-align: center;
 `;
 
-export { StyledGreeting };
+const StyledAuthForm = styled('form')`
+    height: ${(p) => p.height};
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    alight-item: center;
+`;
+
+export { StyledGreeting, StyledAuthForm };

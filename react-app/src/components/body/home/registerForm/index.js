@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
-import StyledLoginForm from './styles.css';
-import { StyledTitle, StyledError } from '../../../styles.css';
-import InputContainer from '../../../shared/Input';
-import Button from '../../../shared/Button';
+import Form from '../../../shared/Form';
+import { isEmailValid } from '../helpers';
+import { StyledAuthForm } from '../styles.css';
+import { StyledError } from '../../../styles.css';
+import { EMPTY_STRING } from '../../../../constants';
 import { formInputHeight } from '../../../../styles/const';
 import useCustomerContext from '../../../../context/customer/hook';
-import { EMPTY_STRING } from '../../../../constants';
-import { isEmailValid } from '../helpers';
 
 const RegisterForm = ({ goToLogin }) => {
     const [name, setName] = useState('');
@@ -60,42 +59,57 @@ const RegisterForm = ({ goToLogin }) => {
         validateField(fieldName, event.target.value);
     };
 
+    // SET FORM ELEMENTS
+    const getFormInputs = () => {
+        return [
+            {
+                id: 'name',
+                type: 'text',
+                value: name,
+                label: 'Name:',
+                placeholder: 'Enter your name here',
+                height: formInputHeight,
+                onChange: (e) => handleOnChange(e, setName, 'name')
+            },
+            {
+                id: 'email',
+                type: 'text',
+                value: email,
+                label: 'Email:',
+                placeholder: 'Enter your email here',
+                height: formInputHeight,
+                onChange: (e) => handleOnChange(e, setEmail, 'email')
+            },
+            {
+                id: 'password',
+                type: 'password',
+                value: password,
+                label: 'Password:',
+                placeholder: 'Enter your password here',
+                height: formInputHeight,
+                onChange: (e) => handleOnChange(e, setPassword, 'password')
+            }
+        ];
+    };
+
+    const getFormButtons = () => {
+        return [
+            {
+                text: 'Sing in',
+                type: 'button',
+                active: formIsValid,
+                handleClick: submitHandler
+            }
+        ];
+    };
+
     return (
-        <StyledLoginForm>
-            <StyledTitle>Sign up</StyledTitle>
-            {error ? <StyledError>{error}</StyledError> : null}
-            <InputContainer
-                height={formInputHeight}
-                type='name'
-                id='name'
-                label='Name:'
-                placeholder='Enter your name here'
-                value={name}
-                onChange={(e) => handleOnChange(e, setName, 'name')}
-            />
-            <InputContainer
-                height={formInputHeight}
-                type='email'
-                id='email'
-                label='Email:'
-                placeholder='Enter your email here'
-                value={email}
-                onChange={(e) => handleOnChange(e, setEmail, 'email')}
-            />
-            <InputContainer
-                height={formInputHeight}
-                type='password'
-                id='password'
-                label='Password:'
-                placeholder='Enter your password here'
-                value={password}
-                onChange={(e) => handleOnChange(e, setPassword, 'password')}
-            />{' '}
-            <Button type='button' text='Sign up' handleClick={submitHandler} active={formIsValid} />
+        <StyledAuthForm height='400px'>
+            <Form inputsInfo={getFormInputs()} buttonsInfo={getFormButtons()} title='Sing up' error={error} />
             {fieldsErrors.name ? <StyledError>{fieldsErrors.name}</StyledError> : null}
             {fieldsErrors.email ? <StyledError>{fieldsErrors.email}</StyledError> : null}
             {fieldsErrors.password ? <StyledError>{fieldsErrors.password}</StyledError> : null}
-        </StyledLoginForm>
+        </StyledAuthForm>
     );
 };
 
