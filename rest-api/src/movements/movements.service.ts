@@ -1,5 +1,6 @@
 import {
   ForbiddenException,
+  BadRequestException,
   Inject,
   Injectable,
   forwardRef,
@@ -49,8 +50,20 @@ export class MovementsService {
       product.type === importedWarehouse.type;
 
     if (!correctType) {
-      throw new ForbiddenException('wrong product type');
+      throw new BadRequestException('wrong product type');
     }
+
+    await this.validateFreeSpaceInImporter(
+      importedWarehouseId,
+      product.size,
+      dto.productCount,
+    );
+
+    await this.validateProductCountInExporter(
+      exportedWarehouseId,
+      productId,
+      dto.productCount,
+    );
 
     const movement = await this.movementModel.create({ ...dto });
 
@@ -118,5 +131,39 @@ export class MovementsService {
       customerWarehouses.some((x) => x.id === importWarehouseId) &&
       customerWarehouses.some((x) => x.id === exportWarehouseId)
     );
+  };
+
+  private validateFreeSpaceInImporter = async (
+    importedWarehouseId: string,
+    productSize: number,
+    count: number,
+  ) => {
+    if (!importedWarehouseId) return;
+    const importedWarehouse = await this.warehouseService.getOneAsync(
+      importedWarehouseId,
+    );
+    if (importedWarehouse.freeSpace < productSize * count) {
+      throw new BadRequestException('no space for this count');
+    }
+  };
+
+  private validateProductCountInExporter = async (
+    exportedWarehouseId: string,
+    productId: string,
+    count: number,
+  ) => {
+    if (!exportedWarehouseId) return;
+    const exportedWithProducts = await this.warehouseService.getOneDetails(
+      exportedWarehouseId,
+    );
+    const productInExporter = exportedWithProducts.products.find(
+      (x) => x.id === productId,
+    );
+    if (!productInExporter) {
+      throw new BadRequestException('no such product in exporter');
+    }
+    if (productInExporter.count < count) {
+      throw new BadRequestException('not enough quantity to export');
+    }
   };
 }

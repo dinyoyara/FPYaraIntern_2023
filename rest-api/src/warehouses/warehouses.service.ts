@@ -56,6 +56,7 @@ export class WarehousesService {
 
   getOneAsync = async (id: string): Promise<WarehouseInfoDto> => {
     const warehouse = await this.warehouseModel.findByPk(id);
+    if (!warehouse) return null;
     return await this.warehouseToWarehouseInfoDtoAsync(warehouse);
   };
 
@@ -123,6 +124,7 @@ export class WarehousesService {
 
   getOneDetails = async (id: string): Promise<WarehouseWithProductDto> => {
     const warehouse = await this.getById(id);
+    if (!warehouse) return null;
     const warehouseWithInfo = await this.warehouseToWarehouseInfoDtoAsync(
       warehouse,
     );

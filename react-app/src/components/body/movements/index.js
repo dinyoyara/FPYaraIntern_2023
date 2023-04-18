@@ -34,8 +34,7 @@ const Movements = () => {
 
     const [formName, setFormName] = useState('Import / Export');
 
-    const { warehouse, exporter, warehouses, getAllByCustomerAsync, getOneAsync, getExporterAsync } =
-        useWarehouseContext();
+    const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
     const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
     const { products, getAllAsync } = useProductContext();
 
@@ -46,6 +45,7 @@ const Movements = () => {
     }, []);
 
     useEffect(() => {
+        clearError();
         checkFormIsValid();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputCount, inputExporterName, inputImporterName, inputProductName]);
@@ -83,8 +83,8 @@ const Movements = () => {
         const importedWhId = importedWh ? importedWh.id : null;
         const product = products.find((x) => x.name === inputProductName);
 
-        const isCountValid = await validateProductCount(exportedWh, importedWh, product, inputCount);
-        if (!isCountValid) return;
+        const haveSpace = await validateImporterFreeSpace(importedWh, product, inputCount);
+        if (!haveSpace) return;
 
         const result = await createMovementAsync(exportedWhId, importedWhId, product.id, inputCount, inputDate);
 
@@ -95,30 +95,10 @@ const Movements = () => {
         }
     };
 
-    const validateProductCount = async (exportedWr, importedWr, product, count) => {
-        //validate count in Importer
+    const validateImporterFreeSpace = async (importedWr, product, count) => {
         const productsSpace = product.size * count;
         if (importedWr && importedWr.freeSpace < productsSpace) {
             setLimitation('no space for this count');
-            return false;
-        }
-
-        //validate count in Exporter
-        if (!exportedWr) {
-            return true;
-        }
-        const result = await getExporterAsync(exportedWr.id);
-        if (!result) {
-            setLimitation('something unexpected happened, try again');
-            return false;
-        }
-        const productInExporter = exporter.products.find((x) => x.name === product.name);
-
-        if (!productInExporter) {
-            setLimitation('no such a product in exporter');
-            return false;
-        } else if (productInExporter.count < count) {
-            setLimitation('no such a count in exporter');
             return false;
         }
 
@@ -158,6 +138,7 @@ const Movements = () => {
     // IMPORT / EXPORT
     const handleAddExport = (name, type, warehouseProducts) => {
         setShowMovements(false);
+        clearError();
         const exportedWh = warehouses.find((x) => x.name === name);
         if (exportedWh.size === exportedWh.freeSpace) {
             clearForm();
@@ -186,7 +167,7 @@ const Movements = () => {
 
     const handleAddImport = async (name, type, freeSpace) => {
         setShowMovements(false);
-
+        clearError();
         if (freeSpace === 0) {
             clearForm();
             setLimitation('no space for import');
