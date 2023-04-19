@@ -10,11 +10,11 @@ import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 import { UNKNOWN, EXTERNAL } from '../../../constants';
-import { getDateString, isValueInteger } from './helpers';
+import { getDateString, isValueInteger, getCurrentDate } from './helpers';
 import Modal from '../../shared/Modal';
 
 const Movements = () => {
-    const [inputDate, setInputDate] = useState(new Date().toISOString().split('T')[0]);
+    const [inputDate, setInputDate] = useState(getCurrentDate());
     const [inputCount, setInputCount] = useState(1);
     const [inputExporterName, setInputExporterName] = useState();
     const [inputImporterName, setInputImporterName] = useState();
@@ -106,7 +106,7 @@ const Movements = () => {
     };
 
     const clearForm = () => {
-        setInputDate(new Date().toISOString().split('T')[0]);
+        setInputDate(getCurrentDate());
         setInputCount(1);
         setInputExporterName();
         setInputImporterName();
