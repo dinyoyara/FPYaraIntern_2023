@@ -29,11 +29,18 @@ const Warehouses = () => {
 
     const [limitation, setLimitation] = useState(EMPTY_STRING);
 
-    const { warehouses, error, createWarehouseAsync, getAllByCustomerAsync, clearError, deleteAsync, updateAsync } =
-        useWarehouseContext();
+    const {
+        warehouses,
+        error,
+        createWarehouseAsync,
+        getAllWarehousesByCustomerAsync,
+        clearError,
+        deleteWarehouseAsync,
+        updateWarehouseAsync
+    } = useWarehouseContext();
 
     useEffect(() => {
-        getAllByCustomerAsync();
+        getAllWarehousesByCustomerAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -94,11 +101,11 @@ const Warehouses = () => {
             setLimitation('warehouse has products');
             return;
         }
-        await deleteAsync(id);
+        await deleteWarehouseAsync(id);
     };
 
     const handleEdit = async () => {
-        const result = await updateAsync(editedId, inputName, inputSize, selectType);
+        const result = await updateWarehouseAsync(editedId, inputName, inputSize, selectType);
         if (result) {
             clearForm();
             setEdit(false);

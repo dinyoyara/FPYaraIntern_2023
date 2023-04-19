@@ -29,10 +29,10 @@ const Products = () => {
     });
     const [formIsValid, setFormIsValid] = useState(false);
 
-    const { products, error, createProductAsync, getAllAsync, clearError } = useProductContext();
+    const { products, error, createProductAsync, getAllProductsAsync, clearError } = useProductContext();
 
     useEffect(() => {
-        getAllAsync();
+        getAllProductsAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

@@ -11,7 +11,7 @@ function ProductProvider({ children }) {
     const createProductAsync = async (name, price, size, type) => {
         try {
             await axiosClient.post(`/products`, { name, price, size, type });
-            await getAllAsync();
+            await getAllProductsAsync();
             return true;
         } catch (error) {
             setError(error.response.data.message);
@@ -19,7 +19,7 @@ function ProductProvider({ children }) {
         }
     };
 
-    const getAllAsync = async () => {
+    const getAllProductsAsync = async () => {
         try {
             const response = await axiosClient.get(`/products`);
             setProducts(response.data);
@@ -36,7 +36,7 @@ function ProductProvider({ children }) {
         products,
         error,
         createProductAsync,
-        getAllAsync,
+        getAllProductsAsync,
         clearError
     };
 

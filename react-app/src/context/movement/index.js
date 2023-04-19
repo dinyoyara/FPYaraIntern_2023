@@ -24,7 +24,7 @@ function MovementProvider({ children }) {
         }
     };
 
-    const getAllByWarehouseIdAsync = async (id) => {
+    const getAllMovementsByWarehouseIdAsync = async (id) => {
         try {
             const response = await axiosClient.get(`/movements/warehouse/${id}`);
             setMovements(response.data);
@@ -36,14 +36,14 @@ function MovementProvider({ children }) {
     };
 
     const clearError = () => {
-        setError(null);
+        setError();
     };
 
     const valueToShare = {
         movements,
         error,
         createMovementAsync,
-        getAllByWarehouseIdAsync,
+        getAllMovementsByWarehouseIdAsync,
         clearError
     };
 

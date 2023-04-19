@@ -7,12 +7,12 @@ const WarehouseContext = createContext();
 function WarehouseProvider({ children }) {
     const [warehouses, setWarehouses] = useState([]);
     const [warehouse, setWarehouse] = useState();
-    const [error, setError] = useState('');
+    const [error, setError] = useState();
 
     const createWarehouseAsync = async (name, size, type) => {
         try {
             await axiosClient.post(`/warehouses`, { name, type, size });
-            await getAllByCustomerAsync();
+            await getAllWarehousesByCustomerAsync();
             return true;
         } catch (error) {
             setError(error.response.data.message);
@@ -20,10 +20,10 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const updateAsync = async (id, name, size, type) => {
+    const updateWarehouseAsync = async (id, name, size, type) => {
         try {
             await axiosClient.put(`/warehouses/${id}`, { name, size, type });
-            await getAllByCustomerAsync();
+            await getAllWarehousesByCustomerAsync();
             return true;
         } catch (error) {
             setError(error.response.data.message);
@@ -31,7 +31,7 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const getAllByCustomerAsync = async () => {
+    const getAllWarehousesByCustomerAsync = async () => {
         try {
             const response = await axiosClient.get(`/warehouses`);
             setWarehouses(response.data);
@@ -40,7 +40,7 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const getOneAsync = async (id) => {
+    const getWarehouseAsync = async (id) => {
         try {
             const response = await axiosClient.get(`/warehouses/${id}`);
             setWarehouse(response.data);
@@ -51,17 +51,17 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const deleteAsync = async (id) => {
+    const deleteWarehouseAsync = async (id) => {
         try {
             await axiosClient.delete(`/warehouses/${id}`);
-            await getAllByCustomerAsync();
+            await getAllWarehousesByCustomerAsync();
         } catch (error) {
             //setError(error.response.data.message);
         }
     };
 
     const clearError = () => {
-        setError(null);
+        setError();
     };
 
     const valueToShare = {
@@ -69,10 +69,10 @@ function WarehouseProvider({ children }) {
         warehouses,
         error,
         createWarehouseAsync,
-        updateAsync,
-        getAllByCustomerAsync,
-        getOneAsync,
-        deleteAsync,
+        updateWarehouseAsync,
+        getAllWarehousesByCustomerAsync,
+        getWarehouseAsync,
+        deleteWarehouseAsync,
         clearError
     };
 

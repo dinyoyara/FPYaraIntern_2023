@@ -34,13 +34,14 @@ const Movements = () => {
 
     const [formName, setFormName] = useState('Import / Export');
 
-    const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
-    const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
-    const { products, getAllAsync } = useProductContext();
+    const { warehouse, warehouses, getAllWarehousesByCustomerAsync, getWarehouseAsync } = useWarehouseContext();
+    const { movements, error, clearError, createMovementAsync, getAllMovementsByWarehouseIdAsync } =
+        useMovementContext();
+    const { products, getAllProductsAsync } = useProductContext();
 
     useEffect(() => {
-        getAllByCustomerAsync();
-        getAllAsync();
+        getAllWarehousesByCustomerAsync();
+        getAllProductsAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -89,7 +90,7 @@ const Movements = () => {
         const result = await createMovementAsync(exportedWhId, importedWhId, product.id, inputCount, inputDate);
 
         if (result) {
-            getAllByCustomerAsync();
+            getAllWarehousesByCustomerAsync();
             setShowDetails(false);
             clearForm();
         }
@@ -117,7 +118,7 @@ const Movements = () => {
     };
 
     const handleShowDetails = async (id) => {
-        const result = await getOneAsync(id);
+        const result = await getWarehouseAsync(id);
         if (result) setShowDetails(true);
     };
 
@@ -127,7 +128,7 @@ const Movements = () => {
     };
 
     const handleShowMovements = async (id) => {
-        const result = await getAllByWarehouseIdAsync(id);
+        const result = await getAllMovementsByWarehouseIdAsync(id);
         if (result) setShowMovements(true);
     };
 
