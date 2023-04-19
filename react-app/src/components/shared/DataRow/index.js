@@ -5,14 +5,14 @@ const DataRow = ({ data, actions, width }) => {
     return (
         <StyledDataRow>
             {Object.values(restData).map((x, i) => (
-                <StyledData key={i * 50} width={width}>
+                <StyledData key={x + i} width={width}>
                     {x}
                 </StyledData>
             ))}
             {actions ? (
                 <StyledData width={width}>
-                    {actions.map((x) => (
-                        <StyledAction key={x.name} onClick={() => x.onClick(id)}>
+                    {actions.map((x, i) => (
+                        <StyledAction key={x.name + i} onClick={() => x.onClick(id)}>
                             {x.name}
                         </StyledAction>
                     ))}
