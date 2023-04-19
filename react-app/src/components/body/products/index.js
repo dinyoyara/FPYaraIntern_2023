@@ -10,10 +10,10 @@ import {
     NAME_MIN_LENGTH
 } from '../../../constants';
 import Form from '../../shared/Form';
-import useProductContext from '../../../context/product/hook';
-import { StyledError, StyledLink } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
+import { StyledError, StyledLink } from '../../styles.css';
 import { StyledScreen, StyledDataPart } from '../styles.css';
+import useProductContext from '../../../context/product/hook';
 
 const Products = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
@@ -163,7 +163,13 @@ const Products = () => {
             <StyledDataPart width='60%'>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
                 {showProducts && products.length > 0 ? (
-                    <DataContainer labelData={getDataLabels()} data={products} title='Products' />
+                    <DataContainer
+                        labelData={getDataLabels()}
+                        data={products}
+                        title='Products'
+                        height='85%'
+                        rowContainerHeight='80%'
+                    />
                 ) : null}
                 {showProducts && products.length === 0 ? <StyledError>No products</StyledError> : null}
             </StyledDataPart>

@@ -222,6 +222,8 @@ const Warehouses = () => {
                         data={warehouses}
                         actions={getDataActions()}
                         title='Warehouses'
+                        height='100%'
+                        rowContainerHeight='80%'
                     />
                 ) : (
                     <StyledError>No warehouses</StyledError>

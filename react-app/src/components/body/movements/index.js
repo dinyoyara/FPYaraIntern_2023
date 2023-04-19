@@ -315,6 +315,8 @@ const Movements = () => {
                         data={getWarehousesData()}
                         title='Warehouses'
                         actions={getWarehousesDataActions()}
+                        height='45%'
+                        rowContainerHeight='60%'
                     />
                 ) : null}
                 {!showMovements && warehouses.length === 0 ? <StyledError>No warehouses</StyledError> : null}
@@ -323,16 +325,25 @@ const Movements = () => {
                     <Card
                         data={warehouse}
                         width='100%'
+                        height='55%'
                         addExport={handleAddExport}
                         addImport={handleAddImport}
                         showMovements={handleShowMovements}
                         hideMovements={handleHideMovements}
                         isMovementsShowed={showMovements}
                         hideDetails={hideDetails}
+                        dataContainerHeight='45%'
+                        rowContainerHeight='60%'
                     />
                 ) : null}
                 {showMovements && movements.length > 0 ? (
-                    <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
+                    <DataContainer
+                        labelData={getMovementsDataLabel()}
+                        data={getMovementsData()}
+                        title='Movements'
+                        height='45%'
+                        rowContainerHeight='60%'
+                    />
                 ) : null}
                 {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
             </StyledDataPart>
