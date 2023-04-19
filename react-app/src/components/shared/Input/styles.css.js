@@ -1,14 +1,5 @@
 import styled from 'styled-components';
 
-const StyledInputContainer = styled('div')`
-    margin: 10px 0;
-    height: ${(p) => p.height};
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    font-size: 1rem;
-`;
-
 const StyledInput = styled('input')`
     height: 60%;
     padding 5px;
@@ -17,4 +8,4 @@ const StyledInput = styled('input')`
     border-radius: 5px;
 `;
 
-export { StyledInputContainer, StyledInput };
+export default StyledInput;
