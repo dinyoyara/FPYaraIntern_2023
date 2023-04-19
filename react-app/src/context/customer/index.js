@@ -1,17 +1,10 @@
-import jwt from 'jwt-decode';
 import { createContext, useState } from 'react';
 
 import axiosClient from '../../services/axios.service';
-import { getToken, setToken, removeToken } from '../../services/storage.service';
+import { getCustomerFromJWT } from './helpers';
+import { setToken, removeToken } from '../../services/storage.service';
 
 const CustomerContext = createContext();
-
-const getCustomerFromJWT = () => {
-    const token = getToken();
-    if (!token) return null;
-    const { id, email, name } = jwt(token);
-    return { id, email, name };
-};
 
 function CustomerProvider({ children }) {
     const [customer, setCustomer] = useState(getCustomerFromJWT());
@@ -47,7 +40,7 @@ function CustomerProvider({ children }) {
     };
 
     const clearError = () => {
-        setError(null);
+        setError();
     };
 
     const valueToShare = {
