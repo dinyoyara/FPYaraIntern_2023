@@ -22,7 +22,11 @@ const Products = () => {
     const [selectType, setSelectType] = useState(NON_HAZARDOUS);
     const [showProducts, setShowProducts] = useState(false);
 
-    const [fieldsErrors, setFieldsErrors] = useState({ inputName: '', inputSize: '', inputPrice: '' });
+    const [fieldsErrors, setFieldsErrors] = useState({
+        inputName: EMPTY_STRING,
+        inputSize: EMPTY_STRING,
+        inputPrice: EMPTY_STRING
+    });
     const [formIsValid, setFormIsValid] = useState(false);
 
     const { products, error, createProductAsync, getAllAsync, clearError } = useProductContext();
@@ -39,7 +43,7 @@ const Products = () => {
 
     const validateField = (fieldName, value) => {
         const currentErrors = { ...fieldsErrors };
-        currentErrors[fieldName] = '';
+        currentErrors[fieldName] = EMPTY_STRING;
         switch (fieldName) {
             case 'inputSize':
                 if (value < PRODUCT_MIN_SIZE) currentErrors[fieldName] = `size should be above ${PRODUCT_MIN_SIZE}`;
@@ -59,7 +63,9 @@ const Products = () => {
 
     const checkFormIsValid = () => {
         const validValues =
-            fieldsErrors.inputSize === '' && fieldsErrors.inputName === '' && fieldsErrors.inputPrice === '';
+            fieldsErrors.inputSize === EMPTY_STRING &&
+            fieldsErrors.inputName === EMPTY_STRING &&
+            fieldsErrors.inputPrice === EMPTY_STRING;
         const notEmptyValues = inputName !== EMPTY_STRING;
         setFormIsValid(validValues && notEmptyValues);
     };
@@ -88,6 +94,7 @@ const Products = () => {
         setShowProducts((prev) => !prev);
     };
 
+    // SET FORM ELEMENTS
     const getFormInputs = () => {
         return [
             {
@@ -141,6 +148,7 @@ const Products = () => {
         ];
     };
 
+    //SET PRODUCTS DATA
     const getDataLabels = () => {
         const { id, ...props } = products[0];
         return Object.keys(props);

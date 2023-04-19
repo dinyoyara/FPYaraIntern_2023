@@ -1,5 +1,5 @@
-import { StyledLink, StyledError, StyledTitle } from '../../styles.css';
 import DataContainer from '../DataContainer';
+import { StyledLink, StyledError, StyledTitle } from '../../styles.css';
 import StyledCard, { StyledCardElement, StyledValue, StyledActionsContainer } from './styles.css';
 
 const Card = ({
