@@ -332,7 +332,7 @@ const Movements = () => {
                         hideMovements={handleHideMovements}
                         isMovementsShowed={showMovements}
                         hideDetails={hideDetails}
-                        dataContainerHeight='45%'
+                        dataContainerHeight='50%'
                         rowContainerHeight='60%'
                     />
                 ) : null}

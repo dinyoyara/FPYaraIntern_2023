@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const StyledCard = styled('div')`
     height: ${(p) => p.height};
     width: ${(p) => p.width};
-    margin: 10px 0;
     padding-top: 10px;
     background: rgba(192, 192, 192, 0.1);
     display: flex;
@@ -26,7 +25,7 @@ const StyledValue = styled('span')`
     font-size: 16px;
 `;
 const StyledActionsContainer = styled('div')`
-    margin-top: 10px;
+    margin: 10px 0;
     width: 100%;
     display: flex;
     justify-content: space-between;

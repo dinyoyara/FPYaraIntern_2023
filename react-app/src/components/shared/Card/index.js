@@ -77,9 +77,3 @@ const Card = ({
 };
 
 export default Card;
-
-// {data.products.map((pr) => (
-//     <div key={pr.id}>
-//         {pr.name} - pr:{pr.price} - c:{pr.count} - s:{pr.size}
-//     </div>
-// ))}
