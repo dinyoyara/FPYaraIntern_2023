@@ -29,7 +29,7 @@ const Products = () => {
     });
     const [formIsValid, setFormIsValid] = useState(false);
 
-    const { products, error, createProductAsync, getAllProductsAsync, clearError } = useProductContext();
+    const { products, errors, createProductAsync, getAllProductsAsync, clearErrors } = useProductContext();
 
     useEffect(() => {
         getAllProductsAsync();
@@ -72,7 +72,7 @@ const Products = () => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -162,7 +162,7 @@ const Products = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title='Create Product'
-                    errors={error}
+                    errors={errors}
                 />
                 {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
                 {fieldsErrors.inputPrice ? <StyledError>{fieldsErrors.inputPrice}</StyledError> : null}
