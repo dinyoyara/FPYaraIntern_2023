@@ -15,7 +15,7 @@ const LoginForm = () => {
     const [formIsValid, setFormIsValid] = useState(false);
     const [fieldsErrors, setFieldsErrors] = useState({ email: EMPTY_STRING, password: EMPTY_STRING });
 
-    const { signinAsync, clearError, error } = useCustomerContext();
+    const { signinAsync, clearErrors, errors } = useCustomerContext();
 
     useEffect(() => {
         checkFormIsValid();
@@ -50,7 +50,7 @@ const LoginForm = () => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -91,7 +91,7 @@ const LoginForm = () => {
 
     return (
         <StyledAuthForm height='320px'>
-            <Form inputsInfo={getFormInputs()} buttonsInfo={getFormButtons()} title='Sing in' error={error} />
+            <Form inputsInfo={getFormInputs()} buttonsInfo={getFormButtons()} title='Sing in' errors={errors} />
             {fieldsErrors.email ? <StyledError>{fieldsErrors.email}</StyledError> : null}
             {fieldsErrors.password ? <StyledError>{fieldsErrors.password}</StyledError> : null}
         </StyledAuthForm>

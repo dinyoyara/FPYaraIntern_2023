@@ -20,7 +20,7 @@ const RegisterForm = ({ goToLogin }) => {
         name: EMPTY_STRING
     });
 
-    const { signupAsync, error, clearError } = useCustomerContext();
+    const { signupAsync, errors, clearErrors } = useCustomerContext();
 
     useEffect(() => {
         checkFormIsValid();
@@ -62,7 +62,7 @@ const RegisterForm = ({ goToLogin }) => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -112,7 +112,7 @@ const RegisterForm = ({ goToLogin }) => {
 
     return (
         <StyledAuthForm height='400px'>
-            <Form inputsInfo={getFormInputs()} buttonsInfo={getFormButtons()} title='Sing up' error={error} />
+            <Form inputsInfo={getFormInputs()} buttonsInfo={getFormButtons()} title='Sing up' errors={errors} />
             {fieldsErrors.name ? <StyledError>{fieldsErrors.name}</StyledError> : null}
             {fieldsErrors.email ? <StyledError>{fieldsErrors.email}</StyledError> : null}
             {fieldsErrors.password ? <StyledError>{fieldsErrors.password}</StyledError> : null}

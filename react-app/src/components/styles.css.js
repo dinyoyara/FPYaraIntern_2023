@@ -7,6 +7,7 @@ const StyledTitle = styled('div')`
 `;
 
 const StyledError = styled('div')`
+    margin-top:5px
     width: 100%;
     font-size: 14px;
     text-align: center;
