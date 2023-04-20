@@ -6,6 +6,7 @@ import { MovementsService } from './movements.service';
 import { MovementsController } from './movements.controller';
 import { WarehousesModule } from '../warehouses/warehouses.module';
 import { ProductsModule } from '../products/products.module';
+import { ErrorsService } from 'src/errors/errors.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ProductsModule } from '../products/products.module';
     forwardRef(() => WarehousesModule),
     ProductsModule,
   ],
-  providers: [MovementsService],
+  providers: [MovementsService, ErrorsService],
   controllers: [MovementsController],
   exports: [MovementsService],
 })
