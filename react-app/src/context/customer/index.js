@@ -1,13 +1,13 @@
 import { createContext, useState } from 'react';
 
-import axiosClient from '../../services/axios.service';
 import { getCustomerFromJWT } from './helpers';
-import { setToken, removeToken } from '../../services/storage.service';
+import axiosClient from '../../services/axios.service';
+import { setToken, getToken, removeToken } from '../../services/storage.service';
 
 const CustomerContext = createContext();
 
 function CustomerProvider({ children }) {
-    const [customer, setCustomer] = useState(getCustomerFromJWT());
+    const [customer, setCustomer] = useState(getCustomerFromJWT(getToken));
     const [error, setError] = useState();
 
     const signupAsync = async (name, email, password) => {
@@ -27,7 +27,7 @@ function CustomerProvider({ children }) {
                 password
             });
             setToken(response.data.token);
-            setCustomer(getCustomerFromJWT());
+            setCustomer(getCustomerFromJWT(getToken));
             setError(null);
         } catch (error) {
             setError(error.response.data.message);

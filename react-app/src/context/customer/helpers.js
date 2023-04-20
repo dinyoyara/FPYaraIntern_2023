@@ -1,8 +1,6 @@
 import jwt from 'jwt-decode';
 
-import { getToken } from '../../services/storage.service';
-
-export const getCustomerFromJWT = () => {
+export const getCustomerFromJWT = (getToken) => {
     const token = getToken();
     if (!token) return null;
     const { id, email, name } = jwt(token);
