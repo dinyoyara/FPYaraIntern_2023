@@ -304,7 +304,7 @@ const Movements = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title={formName}
-                    error={error}
+                    errors={error}
                 />
                 {fieldsErrors.inputCount ? <StyledError>{fieldsErrors.inputCount}</StyledError> : null}
             </StyledDataPart>

@@ -162,7 +162,7 @@ const Products = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title='Create Product'
-                    error={error}
+                    errors={error}
                 />
                 {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
                 {fieldsErrors.inputPrice ? <StyledError>{fieldsErrors.inputPrice}</StyledError> : null}

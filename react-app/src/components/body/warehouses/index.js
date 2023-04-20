@@ -31,10 +31,10 @@ const Warehouses = () => {
 
     const {
         warehouses,
-        error,
+        errors,
         createWarehouseAsync,
         getAllWarehousesByCustomerAsync,
-        clearError,
+        clearErrors,
         deleteWarehouseAsync,
         updateWarehouseAsync
     } = useWarehouseContext();
@@ -50,7 +50,7 @@ const Warehouses = () => {
     }, [edit]);
 
     useEffect(() => {
-        clearError();
+        clearErrors([]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [edit, inputName]);
 
@@ -84,7 +84,7 @@ const Warehouses = () => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -217,7 +217,7 @@ const Warehouses = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title={edit ? 'Edit Warehouse' : 'Create Warehouse'}
-                    error={error}
+                    errors={errors}
                 />
                 {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
                 {fieldsErrors.inputSize ? <StyledError>{fieldsErrors.inputSize}</StyledError> : null}
