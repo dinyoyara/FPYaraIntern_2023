@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 
 import { getCustomerFromJWT } from './helpers';
+import { handleAxiosError } from '../helpers';
 import axiosClient from '../../services/axios.service';
 import { setToken, getToken, removeToken } from '../../services/storage.service';
 
@@ -15,7 +16,7 @@ function CustomerProvider({ children }) {
             await axiosClient.post(`auth/signup`, { name, email, password });
             return true;
         } catch (error) {
-            handleAxiosError(error);
+            handleAxiosError(error, setErrors);
             return false;
         }
     };
@@ -40,11 +41,6 @@ function CustomerProvider({ children }) {
 
     const clearErrors = () => {
         setErrors([]);
-    };
-
-    const handleAxiosError = (error) => {
-        const errorMessages = error.response.data.message;
-        setErrors(errorMessages);
     };
 
     const valueToShare = {

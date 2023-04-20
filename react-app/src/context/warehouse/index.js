@@ -1,13 +1,14 @@
 import { createContext, useState } from 'react';
 
 import axiosClient from '../../services/axios.service';
+import { handleAxiosError } from '../helpers';
 
 const WarehouseContext = createContext();
 
 function WarehouseProvider({ children }) {
     const [warehouses, setWarehouses] = useState([]);
     const [warehouse, setWarehouse] = useState();
-    const [error, setError] = useState();
+    const [errors, setErrors] = useState([]);
 
     const createWarehouseAsync = async (name, size, type) => {
         try {
@@ -15,7 +16,7 @@ function WarehouseProvider({ children }) {
             await getAllWarehousesByCustomerAsync();
             return true;
         } catch (error) {
-            setError(error.response.data.message);
+            handleAxiosError(error, setErrors);
             return false;
         }
     };
@@ -26,7 +27,7 @@ function WarehouseProvider({ children }) {
             await getAllWarehousesByCustomerAsync();
             return true;
         } catch (error) {
-            setError(error.response.data.message);
+            setErrors(error.response.data.message);
             return false;
         }
     };
@@ -60,20 +61,20 @@ function WarehouseProvider({ children }) {
         }
     };
 
-    const clearError = () => {
-        setError();
+    const clearErrors = () => {
+        setErrors([]);
     };
 
     const valueToShare = {
         warehouse,
         warehouses,
-        error,
+        errors,
         createWarehouseAsync,
         updateWarehouseAsync,
         getAllWarehousesByCustomerAsync,
         getWarehouseAsync,
         deleteWarehouseAsync,
-        clearError
+        clearErrors
     };
 
     return <WarehouseContext.Provider value={valueToShare}>{children}</WarehouseContext.Provider>;
