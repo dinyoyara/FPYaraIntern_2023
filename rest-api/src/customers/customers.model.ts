@@ -1,4 +1,5 @@
 import {
+  AllowNull,
   Column,
   DataType,
   DeletedAt,
@@ -6,6 +7,7 @@ import {
   IsEmail,
   Length,
   Model,
+  NotNull,
   PrimaryKey,
   Table,
   Unique,
@@ -22,7 +24,9 @@ export class Customer extends Model {
   id: string;
 
   @Length({ min: 2 })
-  @Column
+  @Column({
+    allowNull: false,
+  })
   name: string;
 
   @Unique
@@ -31,7 +35,9 @@ export class Customer extends Model {
   email: string;
 
   @Length({ min: 4 })
-  @Column
+  @Column({
+    allowNull: false,
+  })
   password: string;
 
   @DeletedAt
