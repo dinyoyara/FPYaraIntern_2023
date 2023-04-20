@@ -54,6 +54,6 @@ export class WarehousesController {
   getOneWithProducts(
     @Param('id') id: string,
   ): Promise<WarehouseWithProductDto> {
-    return this.warehousesService.getOneDetails(id);
+    return this.warehousesService.getOneDetailsAsync(id);
   }
 }

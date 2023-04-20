@@ -7,6 +7,7 @@ import { WarehousesController } from './warehouses.controller';
 import { HttpModule } from '@nestjs/axios';
 import { MathService } from 'src/math/math.service';
 import { MovementsModule } from 'src/movements/movements.module';
+import { ErrorsService } from 'src/errors/errors.service';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { MovementsModule } from 'src/movements/movements.module';
     HttpModule,
   ],
   controllers: [WarehousesController],
-  providers: [WarehousesService, MathService],
+  providers: [WarehousesService, MathService, ErrorsService],
   exports: [WarehousesService],
 })
 export class WarehousesModule {}

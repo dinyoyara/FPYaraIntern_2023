@@ -41,7 +41,7 @@ export class MovementsService {
     }
 
     const product = await this.productService.getById(productId);
-    const importedWarehouse = await this.warehouseService.getById(
+    const importedWarehouse = await this.warehouseService.getByIdAsync(
       importedWarehouseId,
     );
     const correctType =
@@ -153,7 +153,7 @@ export class MovementsService {
     count: number,
   ) => {
     if (!exportedWarehouseId) return;
-    const exportedWithProducts = await this.warehouseService.getOneDetails(
+    const exportedWithProducts = await this.warehouseService.getOneDetailsAsync(
       exportedWarehouseId,
     );
     const productInExporter = exportedWithProducts.products.find(
