@@ -1,12 +1,13 @@
 import { createContext, useState } from 'react';
 
 import axiosClient from '../../services/axios.service';
+import { handleAxiosError } from '../helpers';
 
 const MovementContext = createContext();
 
 function MovementProvider({ children }) {
     const [movements, setMovements] = useState([]);
-    const [error, setError] = useState();
+    const [errors, setErrors] = useState([]);
 
     const createMovementAsync = async (exportedWarehouseId, importedWarehouseId, productId, productCount, date) => {
         try {
@@ -19,7 +20,7 @@ function MovementProvider({ children }) {
             });
             return true;
         } catch (error) {
-            setError(error.response.data.message);
+            handleAxiosError(error, setErrors);
             return false;
         }
     };
@@ -30,21 +31,21 @@ function MovementProvider({ children }) {
             setMovements(response.data);
             return true;
         } catch (error) {
+            handleAxiosError(error, setErrors);
             return false;
-            //setError(error.response.data.message);
         }
     };
 
-    const clearError = () => {
-        setError();
+    const clearErrors = () => {
+        setErrors([]);
     };
 
     const valueToShare = {
         movements,
-        error,
+        errors,
         createMovementAsync,
         getAllMovementsByWarehouseIdAsync,
-        clearError
+        clearErrors
     };
 
     return <MovementContext.Provider value={valueToShare}>{children}</MovementContext.Provider>;

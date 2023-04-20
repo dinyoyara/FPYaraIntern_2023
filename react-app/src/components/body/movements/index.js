@@ -35,7 +35,7 @@ const Movements = () => {
     const [formName, setFormName] = useState('Import / Export');
 
     const { warehouse, warehouses, getAllWarehousesByCustomerAsync, getWarehouseAsync } = useWarehouseContext();
-    const { movements, error, clearError, createMovementAsync, getAllMovementsByWarehouseIdAsync } =
+    const { movements, errors, clearErrors, createMovementAsync, getAllMovementsByWarehouseIdAsync } =
         useMovementContext();
     const { products, getAllProductsAsync } = useProductContext();
 
@@ -46,7 +46,7 @@ const Movements = () => {
     }, []);
 
     useEffect(() => {
-        clearError();
+        clearErrors();
         checkFormIsValid();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputCount, inputExporterName, inputImporterName, inputProductName]);
@@ -73,7 +73,7 @@ const Movements = () => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -139,7 +139,7 @@ const Movements = () => {
     // IMPORT / EXPORT
     const handleAddExport = (name, type, warehouseProducts) => {
         setShowMovements(false);
-        clearError();
+        clearErrors();
         const exportedWh = warehouses.find((x) => x.name === name);
         if (exportedWh.size === exportedWh.freeSpace) {
             clearForm();
@@ -168,7 +168,7 @@ const Movements = () => {
 
     const handleAddImport = async (name, type, freeSpace) => {
         setShowMovements(false);
-        clearError();
+        clearErrors();
         if (freeSpace === 0) {
             clearForm();
             setLimitation('no space for import');
@@ -304,7 +304,7 @@ const Movements = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title={formName}
-                    errors={error}
+                    errors={errors}
                 />
                 {fieldsErrors.inputCount ? <StyledError>{fieldsErrors.inputCount}</StyledError> : null}
             </StyledDataPart>
