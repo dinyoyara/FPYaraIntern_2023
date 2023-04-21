@@ -1,12 +1,12 @@
 import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
   Min,
   Model,
-  PrimaryKey,
   Table,
+  Column,
+  DataType,
+  BelongsTo,
+  ForeignKey,
+  PrimaryKey,
 } from 'sequelize-typescript';
 import { Product } from 'src/products/products.model';
 import { Warehouse } from 'src/warehouses/warehouses.model';

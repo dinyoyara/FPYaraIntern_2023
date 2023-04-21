@@ -1,21 +1,21 @@
 import {
+  Inject,
+  forwardRef,
+  Injectable,
   ForbiddenException,
   BadRequestException,
-  Inject,
-  Injectable,
-  forwardRef,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
+import { InjectModel } from '@nestjs/sequelize';
 
 import { MovementDto } from './dto';
-import { Movement } from './movements.model';
-import { ProductsService } from 'src/products/products.service';
-import { WarehousesService } from 'src/warehouses/warehouses.service';
 import { UNKNOWN } from '../constants';
-import { Product } from 'src/products/products.model';
-import { Warehouse } from 'src/warehouses/warehouses.model';
-import { ErrorsService } from 'src/errors/errors.service';
+import { Movement } from './movements.model';
+import { Product } from '../products/products.model';
+import { ErrorsService } from '../errors/errors.service';
+import { Warehouse } from '../warehouses/warehouses.model';
+import { ProductsService } from '../products/products.service';
+import { WarehousesService } from '../warehouses/warehouses.service';
 
 @Injectable()
 export class MovementsService {
