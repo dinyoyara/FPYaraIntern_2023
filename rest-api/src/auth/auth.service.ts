@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { ConfigService } from '@nestjs/config';
+import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';
 import { Customer } from '../customers/customers.model';
@@ -18,7 +18,7 @@ export class AuthService {
     private errorsService: ErrorsService,
   ) {}
 
-  createCustomerAsync = async (dto: SignupDto): Promise<Customer> => {
+  signupAsync = async (dto: SignupDto): Promise<Customer> => {
     try {
       const customer = await this.customerModel.create({
         ...dto,
@@ -34,7 +34,7 @@ export class AuthService {
     }
   };
 
-  loginAsync = async (dto: SigninDto): Promise<TokenDto> => {
+  signinAsync = async (dto: SigninDto): Promise<TokenDto> => {
     try {
       const customer = await this.customerModel.findOne({
         where: { email: dto.email },
