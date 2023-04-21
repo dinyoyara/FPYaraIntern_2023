@@ -1,16 +1,14 @@
 import {
-  AllowNull,
+  Table,
+  Model,
+  Unique,
   Column,
+  Length,
+  IsEmail,
+  HasMany,
   DataType,
   DeletedAt,
-  HasMany,
-  IsEmail,
-  Length,
-  Model,
-  NotNull,
   PrimaryKey,
-  Table,
-  Unique,
 } from 'sequelize-typescript';
 import { Warehouse } from 'src/warehouses/warehouses.model';
 
