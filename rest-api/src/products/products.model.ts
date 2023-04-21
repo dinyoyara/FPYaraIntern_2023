@@ -1,22 +1,22 @@
 import {
-  Column,
-  DataType,
-  HasMany,
-  Model,
-  PrimaryKey,
-  Table,
   Min,
-  AllowNull,
+  Model,
+  Table,
   Length,
+  Column,
   Unique,
+  HasMany,
+  DataType,
+  AllowNull,
+  PrimaryKey,
 } from 'sequelize-typescript';
 
 import {
+  HAZARDOUS,
+  NON_HAZARDOUS,
   NAME_MIN_LENGTH,
   PRODUCT_MIN_SIZE,
   PRODUCT_MIN_PRICE,
-  HAZARDOUS,
-  NON_HAZARDOUS,
 } from '../constants';
 import { Movement } from 'src/movements/movements.model';
 

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { Product } from './products.model';
 import { ProductDto } from './dto';
-import { ErrorsService } from 'src/errors/errors.service';
+import { Product } from './products.model';
+import { ErrorsService } from '../errors/errors.service';
 
 @Injectable()
 export class ProductsService {

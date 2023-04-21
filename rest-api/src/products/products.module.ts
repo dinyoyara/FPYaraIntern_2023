@@ -3,8 +3,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { Product } from './products.model';
 import { ProductsService } from './products.service';
+import { ErrorsService } from '../errors/errors.service';
 import { ProductsController } from './products.controller';
-import { ErrorsService } from 'src/errors/errors.service';
 
 @Module({
   imports: [SequelizeModule.forFeature([Product])],

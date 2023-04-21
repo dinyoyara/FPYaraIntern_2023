@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { Product } from './products.model';
 
 import { ProductDto } from './dto';
+import { Product } from './products.model';
 import { JwtGuard } from '../auth/guards';
 import { ProductsService } from './products.service';
 
