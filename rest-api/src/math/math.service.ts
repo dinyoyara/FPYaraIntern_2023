@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 
 import {
   MATH_API_PARAM_EXPR_NAME,
