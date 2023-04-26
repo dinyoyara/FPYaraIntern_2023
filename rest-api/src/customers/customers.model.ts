@@ -10,7 +10,7 @@ import {
   DeletedAt,
   PrimaryKey,
 } from 'sequelize-typescript';
-import { Warehouse } from 'src/warehouses/warehouses.model';
+import { Warehouse } from '../warehouses/warehouses.model';
 
 @Table
 export class Customer extends Model {

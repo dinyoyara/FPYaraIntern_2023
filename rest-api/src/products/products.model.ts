@@ -18,7 +18,7 @@ import {
   PRODUCT_MIN_SIZE,
   PRODUCT_MIN_PRICE,
 } from '../constants';
-import { Movement } from 'src/movements/movements.model';
+import { Movement } from '../movements/movements.model';
 
 @Table
 export class Product extends Model {
