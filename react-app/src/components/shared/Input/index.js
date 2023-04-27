@@ -1,13 +1,14 @@
 import React from 'react';
 
-import { StyledInputContainer, StyledInput } from './styles.css';
+import StyledInput from './styles.css';
+import { StyledFieldContainer } from '../../styles.css';
 
 const InputContainer = ({ type, id, placeholder, label, width, value, onChange, height }) => {
     return (
-        <StyledInputContainer width={width} height={height}>
+        <StyledFieldContainer width={width} height={height}>
             <label htmlFor={id}>{label}</label>
             <StyledInput type={type} id={id} placeholder={placeholder} value={value} onChange={onChange} />
-        </StyledInputContainer>
+        </StyledFieldContainer>
     );
 };
 

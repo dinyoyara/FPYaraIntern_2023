@@ -10,11 +10,11 @@ import useProductContext from '../../../context/product/hook';
 import useWarehouseContext from '../../../context/warehouse/hook';
 import { formInputHeight } from '../../../styles/const';
 import { UNKNOWN, EXTERNAL } from '../../../constants';
-import { getDateString, isValueInteger } from './helpers';
+import { getDateString, isValueInteger, getCurrentDate } from './helpers';
 import Modal from '../../shared/Modal';
 
 const Movements = () => {
-    const [inputDate, setInputDate] = useState(new Date().toISOString().split('T')[0]);
+    const [inputDate, setInputDate] = useState(getCurrentDate());
     const [inputCount, setInputCount] = useState(1);
     const [inputExporterName, setInputExporterName] = useState();
     const [inputImporterName, setInputImporterName] = useState();
@@ -34,18 +34,19 @@ const Movements = () => {
 
     const [formName, setFormName] = useState('Import / Export');
 
-    const { warehouse, warehouses, getAllByCustomerAsync, getOneAsync } = useWarehouseContext();
-    const { movements, error, clearError, createMovementAsync, getAllByWarehouseIdAsync } = useMovementContext();
-    const { products, getAllAsync } = useProductContext();
+    const { warehouse, warehouses, getAllWarehousesByCustomerAsync, getWarehouseAsync } = useWarehouseContext();
+    const { movements, errors, clearErrors, createMovementAsync, getAllMovementsByWarehouseIdAsync } =
+        useMovementContext();
+    const { products, getAllProductsAsync } = useProductContext();
 
     useEffect(() => {
-        getAllByCustomerAsync();
-        getAllAsync();
+        getAllWarehousesByCustomerAsync();
+        getAllProductsAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        clearError();
+        clearErrors();
         checkFormIsValid();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [inputCount, inputExporterName, inputImporterName, inputProductName]);
@@ -72,7 +73,7 @@ const Movements = () => {
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -89,7 +90,7 @@ const Movements = () => {
         const result = await createMovementAsync(exportedWhId, importedWhId, product.id, inputCount, inputDate);
 
         if (result) {
-            getAllByCustomerAsync();
+            getAllWarehousesByCustomerAsync();
             setShowDetails(false);
             clearForm();
         }
@@ -106,7 +107,7 @@ const Movements = () => {
     };
 
     const clearForm = () => {
-        setInputDate(new Date().toISOString().split('T')[0]);
+        setInputDate(getCurrentDate());
         setInputCount(1);
         setInputExporterName();
         setInputImporterName();
@@ -117,7 +118,7 @@ const Movements = () => {
     };
 
     const handleShowDetails = async (id) => {
-        const result = await getOneAsync(id);
+        const result = await getWarehouseAsync(id);
         if (result) setShowDetails(true);
     };
 
@@ -127,7 +128,7 @@ const Movements = () => {
     };
 
     const handleShowMovements = async (id) => {
-        const result = await getAllByWarehouseIdAsync(id);
+        const result = await getAllMovementsByWarehouseIdAsync(id);
         if (result) setShowMovements(true);
     };
 
@@ -138,7 +139,7 @@ const Movements = () => {
     // IMPORT / EXPORT
     const handleAddExport = (name, type, warehouseProducts) => {
         setShowMovements(false);
-        clearError();
+        clearErrors();
         const exportedWh = warehouses.find((x) => x.name === name);
         if (exportedWh.size === exportedWh.freeSpace) {
             clearForm();
@@ -167,7 +168,7 @@ const Movements = () => {
 
     const handleAddImport = async (name, type, freeSpace) => {
         setShowMovements(false);
-        clearError();
+        clearErrors();
         if (freeSpace === 0) {
             clearForm();
             setLimitation('no space for import');
@@ -303,7 +304,7 @@ const Movements = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title={formName}
-                    error={error}
+                    errors={errors}
                 />
                 {fieldsErrors.inputCount ? <StyledError>{fieldsErrors.inputCount}</StyledError> : null}
             </StyledDataPart>
@@ -315,6 +316,8 @@ const Movements = () => {
                         data={getWarehousesData()}
                         title='Warehouses'
                         actions={getWarehousesDataActions()}
+                        height='45%'
+                        rowContainerHeight='60%'
                     />
                 ) : null}
                 {!showMovements && warehouses.length === 0 ? <StyledError>No warehouses</StyledError> : null}
@@ -323,16 +326,25 @@ const Movements = () => {
                     <Card
                         data={warehouse}
                         width='100%'
+                        height='55%'
                         addExport={handleAddExport}
                         addImport={handleAddImport}
                         showMovements={handleShowMovements}
                         hideMovements={handleHideMovements}
                         isMovementsShowed={showMovements}
                         hideDetails={hideDetails}
+                        dataContainerHeight='50%'
+                        rowContainerHeight='60%'
                     />
                 ) : null}
                 {showMovements && movements.length > 0 ? (
-                    <DataContainer labelData={getMovementsDataLabel()} data={getMovementsData()} title='Movements' />
+                    <DataContainer
+                        labelData={getMovementsDataLabel()}
+                        data={getMovementsData()}
+                        title='Movements'
+                        height='45%'
+                        rowContainerHeight='60%'
+                    />
                 ) : null}
                 {showMovements && movements.length === 0 ? <StyledError>No movements</StyledError> : null}
             </StyledDataPart>

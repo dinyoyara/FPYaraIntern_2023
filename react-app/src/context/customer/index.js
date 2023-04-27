@@ -1,29 +1,22 @@
-import jwt from 'jwt-decode';
 import { createContext, useState } from 'react';
 
+import { getCustomerFromJWT } from './helpers';
+import { handleAxiosError } from '../helpers';
 import axiosClient from '../../services/axios.service';
-import { getToken, setToken, removeToken } from '../../services/storage.service';
+import { setToken, getToken, removeToken } from '../../services/storage.service';
 
 const CustomerContext = createContext();
 
-const getCustomerFromJWT = () => {
-    const token = getToken();
-    if (!token) return null;
-    const { id, email, name } = jwt(token);
-    return { id, email, name };
-};
-
 function CustomerProvider({ children }) {
-    const [customer, setCustomer] = useState(getCustomerFromJWT());
-    const [error, setError] = useState();
+    const [customer, setCustomer] = useState(getCustomerFromJWT(getToken));
+    const [errors, setErrors] = useState(['aa', 'bb']);
 
     const signupAsync = async (name, email, password) => {
         try {
             await axiosClient.post(`auth/signup`, { name, email, password });
             return true;
         } catch (error) {
-            console.log(error);
-            setError(error.response.data.message);
+            handleAxiosError(error, setErrors);
             return false;
         }
     };
@@ -35,11 +28,9 @@ function CustomerProvider({ children }) {
                 password
             });
             setToken(response.data.token);
-            setCustomer(getCustomerFromJWT());
-            setError(null);
+            setCustomer(getCustomerFromJWT(getToken));
         } catch (error) {
-            console.log(error);
-            setError(error.response.data.message);
+            handleAxiosError(error);
         }
     };
 
@@ -48,17 +39,17 @@ function CustomerProvider({ children }) {
         setCustomer(null);
     };
 
-    const clearError = () => {
-        setError(null);
+    const clearErrors = () => {
+        setErrors([]);
     };
 
     const valueToShare = {
         customer,
-        error,
+        errors,
         signupAsync,
         signinAsync,
         logout,
-        clearError
+        clearErrors
     };
 
     return <CustomerContext.Provider value={valueToShare}>{children}</CustomerContext.Provider>;

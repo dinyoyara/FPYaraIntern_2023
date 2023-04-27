@@ -1,12 +1,10 @@
-import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
-import Header from '../header';
-
 import Home from './home';
+import Header from '../header';
 import Products from './products';
-import Warehouses from './warehouses';
 import Movements from './movements';
+import Warehouses from './warehouses';
 
 const Body = () => {
     const navigate = useNavigate();
@@ -14,6 +12,7 @@ const Body = () => {
     const handleNavigation = (path) => {
         navigate(path);
     };
+
     return (
         <>
             <Header handleNavigation={handleNavigation} />

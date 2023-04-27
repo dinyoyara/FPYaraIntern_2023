@@ -15,6 +15,7 @@ const StyledScreen = styled('div')`
 
 const StyledDataPart = styled('div')`
     width: ${(p) => p.width};
+    height: 100%;
     display: flex;
     flex-direction: column;
 `;

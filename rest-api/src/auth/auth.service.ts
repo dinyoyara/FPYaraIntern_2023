@@ -1,15 +1,12 @@
-import {
-  ForbiddenException,
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/sequelize';
+import { ConfigService } from '@nestjs/config';
+import { Injectable, BadRequestException } from '@nestjs/common';
 
 import { SigninDto, SignupDto, TokenDto } from './dto';
-import { Customer } from 'src/customers/customers.model';
+import { Customer } from '../customers/customers.model';
+import { ErrorsService } from '../errors/errors.service';
 import { hashPasswordAsync, verifyPasswordAsync } from './helpers';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -18,9 +15,10 @@ export class AuthService {
     private customerModel: typeof Customer,
     private jwt: JwtService,
     private config: ConfigService,
+    private errorsService: ErrorsService,
   ) {}
 
-  createCustomerAsync = async (dto: SignupDto): Promise<Customer> => {
+  signupAsync = async (dto: SignupDto): Promise<Customer> => {
     try {
       const customer = await this.customerModel.create({
         ...dto,
@@ -32,22 +30,27 @@ export class AuthService {
       delete customer.dataValues.updatedAt;
       return customer;
     } catch (error) {
-      throw new BadRequestException(error.errors[0].message);
+      this.errorsService.throwException(error);
     }
   };
 
-  loginAsync = async (dto: SigninDto): Promise<TokenDto> => {
-    const customer = await this.customerModel.findOne({
-      where: { email: dto.email },
-    });
-    if (!customer) throw new ForbiddenException('Email incorrect');
+  signinAsync = async (dto: SigninDto): Promise<TokenDto> => {
+    try {
+      const customer = await this.customerModel.findOne({
+        where: { email: dto.email },
+      });
+      if (!customer) throw new BadRequestException(['email incorrect']);
 
-    const correctPassword = await verifyPasswordAsync(
-      dto.password,
-      customer.password,
-    );
-    if (!correctPassword) throw new ForbiddenException('Password incorrect');
-    return this.signTokenAsync(customer.id, customer.email, customer.name);
+      const correctPassword = await verifyPasswordAsync(
+        dto.password,
+        customer.password,
+      );
+      if (!correctPassword)
+        throw new BadRequestException(['password incorrect']);
+      return this.signTokenAsync(customer.id, customer.email, customer.name);
+    } catch (error) {
+      this.errorsService.throwException(error);
+    }
   };
 
   private signTokenAsync = async (
@@ -63,7 +66,7 @@ export class AuthService {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '120m',
+      expiresIn: '24h',
       secret: secret,
     });
 

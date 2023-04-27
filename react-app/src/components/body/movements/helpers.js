@@ -4,6 +4,10 @@ export const getDateString = (date) => {
     return `${month}/${day}/${year}`;
 };
 
+export const getCurrentDate = () => {
+    return new Date().toISOString().split('T')[0];
+};
+
 export const isValueInteger = (value) => {
     return value % 1 === 0;
 };

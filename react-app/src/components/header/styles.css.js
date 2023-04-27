@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { headerHeight } from '../../styles/const';
 
 const StyledHeader = styled('div')`

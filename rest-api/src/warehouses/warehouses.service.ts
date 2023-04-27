@@ -13,6 +13,7 @@ import { MathService } from 'src/math/math.service';
 import { MovementsService } from 'src/movements/movements.service';
 import { ProductInfoModel, ProductWithExprMode } from '../products/models';
 import { UNKNOWN } from 'src/constants';
+import { ErrorsService } from 'src/errors/errors.service';
 
 @Injectable()
 export class WarehousesService {
@@ -20,6 +21,7 @@ export class WarehousesService {
     @InjectModel(Warehouse)
     private warehouseModel: typeof Warehouse,
     private mathService: MathService,
+    private errorsService: ErrorsService,
     @Inject(forwardRef(() => MovementsService))
     private movementsService: MovementsService,
   ) {}
@@ -36,28 +38,26 @@ export class WarehousesService {
 
       return result;
     } catch (error) {
-      throw new BadRequestException(error.errors[0].message);
+      this.errorsService.throwException(error);
     }
   };
 
   getAllByCustomerIdAsync = async (
     customerId: string,
   ): Promise<WarehouseInfoDto[]> => {
-    const warehouses = await this.warehouseModel.findAll({
-      where: { customerId: customerId },
-      attributes: ['id', 'name', 'size', 'type'],
-    });
-    return await Promise.all(
-      warehouses.map(
-        async (w) => await this.warehouseToWarehouseInfoDtoAsync(w),
-      ),
-    );
-  };
-
-  getOneAsync = async (id: string): Promise<WarehouseInfoDto> => {
-    const warehouse = await this.warehouseModel.findByPk(id);
-    if (!warehouse) return null;
-    return await this.warehouseToWarehouseInfoDtoAsync(warehouse);
+    try {
+      const warehouses = await this.warehouseModel.findAll({
+        where: { customerId: customerId },
+        attributes: ['id', 'name', 'size', 'type'],
+      });
+      return await Promise.all(
+        warehouses.map(
+          async (w) => await this.warehouseToWarehouseInfoDtoAsync(w),
+        ),
+      );
+    } catch (error) {
+      this.errorsService.throwException(error);
+    }
   };
 
   updateAsync = async (
@@ -68,15 +68,15 @@ export class WarehousesService {
     try {
       const warehouse = await this.warehouseModel.findByPk(id);
       if (warehouse.customerId != customerId) {
-        throw new ForbiddenException('not authorized');
+        throw new ForbiddenException(['not authorized to update']);
       }
-      const warehouseWithProducts = await this.getOneDetails(id);
+      const warehouseWithProducts = await this.getOneDetailsAsync(id);
       if (
         warehouseWithProducts.products.length > 0 &&
         warehouseWithProducts.type !== dto.type &&
         warehouseWithProducts.type !== UNKNOWN
       ) {
-        throw new BadRequestException('not allowed to change type');
+        throw new BadRequestException(['not allowed to change type']);
       }
       await this.warehouseModel.update(
         { ...dto },
@@ -86,13 +86,7 @@ export class WarehousesService {
       );
       return this.warehouseModel.findByPk(id);
     } catch (error) {
-      if (
-        error.response.statusCode === 400 ||
-        error.response.statusCode === 403
-      ) {
-        throw error;
-      }
-      throw new BadRequestException(error.errors[0].message);
+      this.errorsService.throwException(error);
     }
   };
 
@@ -103,44 +97,49 @@ export class WarehousesService {
     try {
       const warehouseWithFreeSpace = await this.getOneAsync(id);
       if (warehouseWithFreeSpace.freeSpace < warehouseWithFreeSpace.size) {
-        throw new BadRequestException('warehouse has products');
+        throw new BadRequestException(['warehouse has products']);
       }
       const warehouse = await this.warehouseModel.findByPk(id);
       if (warehouse.customerId != customerId) {
-        throw new ForbiddenException('not authorized');
+        throw new ForbiddenException(['not authorized to delete']);
       }
       warehouse.destroy();
       return warehouse;
     } catch (error) {
-      if (
-        error.response.statusCode === 400 ||
-        error.response.statusCode === 403
-      ) {
-        throw error;
-      }
-      throw new BadRequestException(error.errors[0].message);
+      this.errorsService.throwException(error);
     }
   };
 
-  getOneDetails = async (id: string): Promise<WarehouseWithProductDto> => {
-    const warehouse = await this.getById(id);
-    if (!warehouse) return null;
-    const warehouseWithInfo = await this.warehouseToWarehouseInfoDtoAsync(
-      warehouse,
-    );
-    const result: WarehouseWithProductDto = {
-      id: warehouseWithInfo.id,
-      name: warehouseWithInfo.name,
-      size: warehouseWithInfo.size,
-      freeSpace: warehouseWithInfo.freeSpace,
-      type: warehouseWithInfo.type,
-      products: await this.getWarehouseProducts(id),
-    };
-    return result;
+  getOneDetailsAsync = async (id: string): Promise<WarehouseWithProductDto> => {
+    try {
+      const warehouse = await this.getByIdAsync(id);
+      if (!warehouse) return null;
+      const warehouseWithInfo = await this.warehouseToWarehouseInfoDtoAsync(
+        warehouse,
+      );
+      const result: WarehouseWithProductDto = {
+        id: warehouseWithInfo.id,
+        name: warehouseWithInfo.name,
+        size: warehouseWithInfo.size,
+        freeSpace: warehouseWithInfo.freeSpace,
+        type: warehouseWithInfo.type,
+        products: await this.getWarehouseProducts(id),
+      };
+      return result;
+    } catch (error) {
+      this.errorsService.throwException(error);
+    }
   };
 
-  getById = async (id: string): Promise<Warehouse> => {
+  //Used in Services
+  getByIdAsync = async (id: string): Promise<Warehouse> => {
     return this.warehouseModel.findByPk(id);
+  };
+
+  getOneAsync = async (id: string): Promise<WarehouseInfoDto> => {
+    const warehouse = await this.warehouseModel.findByPk(id);
+    if (!warehouse) return null;
+    return await this.warehouseToWarehouseInfoDtoAsync(warehouse);
   };
 
   private getWarehouseProducts = async (
@@ -176,7 +175,7 @@ export class WarehousesService {
 
   private getFreeSpace = async (id: string): Promise<number> => {
     let expr = '';
-    const warehouse = await this.getById(id);
+    const warehouse = await this.getByIdAsync(id);
     expr += warehouse.size;
 
     const movements =

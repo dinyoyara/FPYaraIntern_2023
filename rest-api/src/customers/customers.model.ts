@@ -1,16 +1,16 @@
 import {
+  Table,
+  Model,
+  Unique,
   Column,
+  Length,
+  IsEmail,
+  HasMany,
   DataType,
   DeletedAt,
-  HasMany,
-  IsEmail,
-  Length,
-  Model,
   PrimaryKey,
-  Table,
-  Unique,
 } from 'sequelize-typescript';
-import { Warehouse } from 'src/warehouses/warehouses.model';
+import { Warehouse } from '../warehouses/warehouses.model';
 
 @Table
 export class Customer extends Model {
@@ -22,7 +22,9 @@ export class Customer extends Model {
   id: string;
 
   @Length({ min: 2 })
-  @Column
+  @Column({
+    allowNull: false,
+  })
   name: string;
 
   @Unique
@@ -31,7 +33,9 @@ export class Customer extends Model {
   email: string;
 
   @Length({ min: 4 })
-  @Column
+  @Column({
+    allowNull: false,
+  })
   password: string;
 
   @DeletedAt

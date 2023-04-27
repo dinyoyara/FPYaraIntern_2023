@@ -1,8 +1,20 @@
-import { StyledLink, StyledError, StyledTitle } from '../../styles.css';
 import DataContainer from '../DataContainer';
-import StyledCard, { StyledCardElement, StyledValue, StyledLinkContainer } from './styles.css';
+import { StyledLink, StyledError, StyledTitle } from '../../styles.css';
+import StyledCard, { StyledCardElement, StyledValue, StyledActionsContainer } from './styles.css';
 
-const Card = ({ data, width, addImport, addExport, hideMovements, showMovements, hideDetails, isMovementsShowed }) => {
+const Card = ({
+    data,
+    width,
+    height,
+    addImport,
+    addExport,
+    hideMovements,
+    showMovements,
+    hideDetails,
+    isMovementsShowed,
+    dataContainerHeight,
+    rowContainerHeight
+}) => {
     const getDataLabels = () => {
         const { id, ...props } = data.products[0];
         return Object.keys(props);
@@ -17,7 +29,7 @@ const Card = ({ data, width, addImport, addExport, hideMovements, showMovements,
     return (
         <>
             {data ? (
-                <StyledCard width={width}>
+                <StyledCard width={width} height={height}>
                     {/* <StyledCardElement>
                         name: <StyledValue>{data.name}</StyledValue>
                     </StyledCardElement> */}
@@ -35,9 +47,14 @@ const Card = ({ data, width, addImport, addExport, hideMovements, showMovements,
                         products: {data.products.length > 0 ? null : <StyledValue>n/a</StyledValue>}
                     </StyledCardElement>
                     {data.products.length > 0 ? (
-                        <DataContainer labelData={getDataLabels()} data={getProductsData()} />
+                        <DataContainer
+                            labelData={getDataLabels()}
+                            data={getProductsData()}
+                            height={dataContainerHeight}
+                            rowContainerHeight={rowContainerHeight}
+                        />
                     ) : null}
-                    <StyledLinkContainer>
+                    <StyledActionsContainer>
                         <StyledLink onClick={() => addExport(data.name, data.type, data.products)}>
                             add export
                         </StyledLink>
@@ -50,7 +67,7 @@ const Card = ({ data, width, addImport, addExport, hideMovements, showMovements,
                             <StyledLink onClick={() => showMovements(data.id)}>view movements</StyledLink>
                         )}
                         <StyledLink onClick={hideDetails}>hide details</StyledLink>
-                    </StyledLinkContainer>
+                    </StyledActionsContainer>
                 </StyledCard>
             ) : (
                 <StyledError>Loading...</StyledError>
@@ -60,9 +77,3 @@ const Card = ({ data, width, addImport, addExport, hideMovements, showMovements,
 };
 
 export default Card;
-
-// {data.products.map((pr) => (
-//     <div key={pr.id}>
-//         {pr.name} - pr:{pr.price} - c:{pr.count} - s:{pr.size}
-//     </div>
-// ))}

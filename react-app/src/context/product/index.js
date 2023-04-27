@@ -1,43 +1,44 @@
 import { createContext, useState } from 'react';
 
 import axiosClient from '../../services/axios.service';
+import { handleAxiosError } from '../helpers';
 
 const ProductContext = createContext();
 
 function ProductProvider({ children }) {
     const [products, setProducts] = useState([]);
-    const [error, setError] = useState();
+    const [errors, setErrors] = useState([]);
 
     const createProductAsync = async (name, price, size, type) => {
         try {
             await axiosClient.post(`/products`, { name, price, size, type });
-            await getAllAsync();
+            await getAllProductsAsync();
             return true;
         } catch (error) {
-            setError(error.response.data.message);
+            handleAxiosError(error, setErrors);
             return false;
         }
     };
 
-    const getAllAsync = async () => {
+    const getAllProductsAsync = async () => {
         try {
             const response = await axiosClient.get(`/products`);
             setProducts(response.data);
         } catch (error) {
-            //setError(error.response.data.message);
+            handleAxiosError(error, setErrors);
         }
     };
 
-    const clearError = () => {
-        setError(null);
+    const clearErrors = () => {
+        setErrors([]);
     };
 
     const valueToShare = {
         products,
-        error,
+        errors,
         createProductAsync,
-        getAllAsync,
-        clearError
+        getAllProductsAsync,
+        clearErrors
     };
 
     return <ProductContext.Provider value={valueToShare}>{children}</ProductContext.Provider>;

@@ -1,19 +1,20 @@
 import React from 'react';
 
-import { StyledSelectContainer, StyledSelect, StyledOption } from './styles.css';
+import { StyledFieldContainer } from '../../styles.css';
+import StyledSelect from './styles.css';
 
 const SelectContainer = ({ id, defaultValue, onChange, label, width, height, options }) => {
     return (
-        <StyledSelectContainer width={width} height={height}>
+        <StyledFieldContainer width={width} height={height}>
             <label htmlFor={id}>{label}</label>
             <StyledSelect id={id} value={defaultValue} onChange={onChange}>
                 {options.map((option) => (
-                    <StyledOption key={option.name} value={option.name}>
+                    <option key={option.name} value={option.name}>
                         {option.name}
-                    </StyledOption>
+                    </option>
                 ))}
             </StyledSelect>
-        </StyledSelectContainer>
+        </StyledFieldContainer>
     );
 };
 

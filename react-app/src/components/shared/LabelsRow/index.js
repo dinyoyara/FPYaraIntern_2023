@@ -4,7 +4,7 @@ const LabelsRow = ({ data, hasActions, width }) => {
     return (
         <StyledLabelsRow>
             {data.map((x, i) => (
-                <StyledLabel key={i} width={width}>
+                <StyledLabel key={x} width={width}>
                     {x}
                 </StyledLabel>
             ))}

@@ -1,20 +1,21 @@
 import {
+  Inject,
+  forwardRef,
+  Injectable,
   ForbiddenException,
   BadRequestException,
-  Inject,
-  Injectable,
-  forwardRef,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
+import { InjectModel } from '@nestjs/sequelize';
 
 import { MovementDto } from './dto';
-import { Movement } from './movements.model';
-import { ProductsService } from 'src/products/products.service';
-import { WarehousesService } from 'src/warehouses/warehouses.service';
 import { UNKNOWN } from '../constants';
-import { Product } from 'src/products/products.model';
-import { Warehouse } from 'src/warehouses/warehouses.model';
+import { Movement } from './movements.model';
+import { Product } from '../products/products.model';
+import { ErrorsService } from '../errors/errors.service';
+import { Warehouse } from '../warehouses/warehouses.model';
+import { ProductsService } from '../products/products.service';
+import { WarehousesService } from '../warehouses/warehouses.service';
 
 @Injectable()
 export class MovementsService {
@@ -24,94 +25,106 @@ export class MovementsService {
     @Inject(forwardRef(() => WarehousesService))
     private warehouseService: WarehousesService,
     private productService: ProductsService,
+    private errorsService: ErrorsService,
   ) {}
 
   createMovement = async (
     dto: MovementDto,
     customerId: string,
   ): Promise<Movement> => {
-    const { importedWarehouseId, exportedWarehouseId, productId } = dto;
-    const isOwner = await this.customerIsOwner(
-      customerId,
-      importedWarehouseId,
-      exportedWarehouseId,
-    );
-    if (!isOwner) {
-      throw new ForbiddenException('not authorized');
+    try {
+      const { importedWarehouseId, exportedWarehouseId, productId } = dto;
+      const isOwner = await this.customerIsOwner(
+        customerId,
+        importedWarehouseId,
+        exportedWarehouseId,
+      );
+      if (!isOwner) {
+        throw new ForbiddenException(['not authorized to import/export']);
+      }
+
+      const product = await this.productService.getById(productId);
+      const importedWarehouse = await this.warehouseService.getByIdAsync(
+        importedWarehouseId,
+      );
+      const correctType =
+        importedWarehouse === null ||
+        importedWarehouse.type === UNKNOWN ||
+        product.type === importedWarehouse.type;
+
+      if (!correctType) {
+        throw new BadRequestException(['wrong product type']);
+      }
+
+      await this.validateFreeSpaceInImporter(
+        importedWarehouseId,
+        product.size,
+        dto.productCount,
+      );
+
+      await this.validateProductCountInExporter(
+        exportedWarehouseId,
+        productId,
+        dto.productCount,
+      );
+
+      const movement = await this.movementModel.create({ ...dto });
+
+      if (importedWarehouse !== null && importedWarehouse.type === UNKNOWN) {
+        await this.warehouseService.updateAsync(
+          importedWarehouseId,
+          customerId,
+          {
+            name: importedWarehouse.name,
+            size: importedWarehouse.size,
+            type: product.type,
+          },
+        );
+      }
+      return movement;
+    } catch (error) {
+      this.errorsService.throwException(error);
     }
-
-    const product = await this.productService.getById(productId);
-    const importedWarehouse = await this.warehouseService.getById(
-      importedWarehouseId,
-    );
-    const correctType =
-      importedWarehouse === null ||
-      importedWarehouse.type === UNKNOWN ||
-      product.type === importedWarehouse.type;
-
-    if (!correctType) {
-      throw new BadRequestException('wrong product type');
-    }
-
-    await this.validateFreeSpaceInImporter(
-      importedWarehouseId,
-      product.size,
-      dto.productCount,
-    );
-
-    await this.validateProductCountInExporter(
-      exportedWarehouseId,
-      productId,
-      dto.productCount,
-    );
-
-    const movement = await this.movementModel.create({ ...dto });
-
-    if (importedWarehouse !== null && importedWarehouse.type === UNKNOWN) {
-      await this.warehouseService.updateAsync(importedWarehouseId, customerId, {
-        name: importedWarehouse.name,
-        size: importedWarehouse.size,
-        type: product.type,
-      });
-    }
-
-    return movement;
   };
 
   getAllMovementsByWarehouseIdAsync = async (
     warehouseId: string,
   ): Promise<Movement[]> => {
-    return this.movementModel.findAll({
-      where: {
-        [Op.or]: [
-          { importedWarehouseId: warehouseId },
-          { exportedWarehouseId: warehouseId },
+    try {
+      return this.movementModel.findAll({
+        where: {
+          [Op.or]: [
+            { importedWarehouseId: warehouseId },
+            { exportedWarehouseId: warehouseId },
+          ],
+        },
+        attributes: [
+          'productId',
+          'productCount',
+          'importedWarehouseId',
+          'exportedWarehouseId',
+          'date',
         ],
-      },
-      attributes: [
-        'productId',
-        'productCount',
-        'importedWarehouseId',
-        'exportedWarehouseId',
-        'date',
-      ],
-      include: [
-        {
-          model: Product,
-          attributes: ['name', 'size', 'price'],
-        },
-        {
-          model: Warehouse,
-          as: 'importedWarehouse',
-          attributes: ['name'],
-        },
-        {
-          model: Warehouse,
-          as: 'exportedWarehouse',
-          attributes: ['name'],
-        },
-      ],
-    });
+        include: [
+          {
+            model: Product,
+            attributes: ['name', 'size', 'price'],
+          },
+          {
+            model: Warehouse,
+            as: 'importedWarehouse',
+            attributes: ['name'],
+          },
+          {
+            model: Warehouse,
+            as: 'exportedWarehouse',
+            attributes: ['name'],
+          },
+        ],
+      });
+    } catch (error) {
+      this.errorsService.throwException(error);
+    }
   };
 
   private customerIsOwner = async (
@@ -143,7 +156,7 @@ export class MovementsService {
       importedWarehouseId,
     );
     if (importedWarehouse.freeSpace < productSize * count) {
-      throw new BadRequestException('no space for this count');
+      throw new BadRequestException(['no space for this count']);
     }
   };
 
@@ -153,17 +166,17 @@ export class MovementsService {
     count: number,
   ) => {
     if (!exportedWarehouseId) return;
-    const exportedWithProducts = await this.warehouseService.getOneDetails(
+    const exportedWithProducts = await this.warehouseService.getOneDetailsAsync(
       exportedWarehouseId,
     );
     const productInExporter = exportedWithProducts.products.find(
       (x) => x.id === productId,
     );
     if (!productInExporter) {
-      throw new BadRequestException('no such product in exporter');
+      throw new BadRequestException(['no such product in exporter']);
     }
     if (productInExporter.count < count) {
-      throw new BadRequestException('not enough quantity to export');
+      throw new BadRequestException(['not enough quantity to export']);
     }
   };
 }

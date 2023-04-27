@@ -1,14 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { Product } from './products.model';
 import { ProductDto } from './dto';
+import { Product } from './products.model';
+import { ErrorsService } from '../errors/errors.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Product)
     private productModel: typeof Product,
+    private errorsService: ErrorsService,
   ) {}
 
   createAsync = async (dto: ProductDto): Promise<Product> => {
@@ -16,14 +18,18 @@ export class ProductsService {
       const product = await this.productModel.create({ ...dto });
       return product;
     } catch (error) {
-      throw new BadRequestException(error.errors[0].message);
+      this.errorsService.throwException(error);
     }
   };
 
   getAllAsync = async (): Promise<Product[]> => {
-    return this.productModel.findAll({
-      attributes: ['id', 'name', 'size', 'type', 'price'],
-    });
+    try {
+      return this.productModel.findAll({
+        attributes: ['id', 'name', 'size', 'type', 'price'],
+      });
+    } catch (error) {
+      this.errorsService.throwException(error);
+    }
   };
 
   getById = async (id: string): Promise<Product> => {

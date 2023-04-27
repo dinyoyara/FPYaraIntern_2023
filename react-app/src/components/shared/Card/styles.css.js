@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 const StyledCard = styled('div')`
-    padding-top: 15px;
-    margin: 10px 0;
+    height: ${(p) => p.height};
     width: ${(p) => p.width};
+    padding-top: 10px;
     background: rgba(192, 192, 192, 0.1);
     display: flex;
     flex-direction: column;
@@ -24,12 +24,12 @@ const StyledValue = styled('span')`
     font-weight: 600;
     font-size: 16px;
 `;
-const StyledLinkContainer = styled('div')`
-    margin-top: 20px;
+const StyledActionsContainer = styled('div')`
+    margin: 10px 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
 `;
 
 export default StyledCard;
-export { StyledCardElement, StyledValue, StyledLinkContainer };
+export { StyledCardElement, StyledValue, StyledActionsContainer };

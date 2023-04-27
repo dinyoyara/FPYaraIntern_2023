@@ -1,15 +1,15 @@
 import {
-  BelongsTo,
-  Column,
-  DataType,
-  ForeignKey,
   Min,
   Model,
-  PrimaryKey,
   Table,
+  Column,
+  DataType,
+  BelongsTo,
+  ForeignKey,
+  PrimaryKey,
 } from 'sequelize-typescript';
-import { Product } from 'src/products/products.model';
-import { Warehouse } from 'src/warehouses/warehouses.model';
+import { Product } from '../products/products.model';
+import { Warehouse } from '../warehouses/warehouses.model';
 
 @Table
 export class Movement extends Model {

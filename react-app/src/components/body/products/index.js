@@ -10,10 +10,10 @@ import {
     NAME_MIN_LENGTH
 } from '../../../constants';
 import Form from '../../shared/Form';
-import useProductContext from '../../../context/product/hook';
-import { StyledError, StyledLink } from '../../styles.css';
 import DataContainer from '../../shared/DataContainer';
+import { StyledError, StyledLink } from '../../styles.css';
 import { StyledScreen, StyledDataPart } from '../styles.css';
+import useProductContext from '../../../context/product/hook';
 
 const Products = () => {
     const [inputName, setInputName] = useState(EMPTY_STRING);
@@ -22,13 +22,17 @@ const Products = () => {
     const [selectType, setSelectType] = useState(NON_HAZARDOUS);
     const [showProducts, setShowProducts] = useState(false);
 
-    const [fieldsErrors, setFieldsErrors] = useState({ inputName: '', inputSize: '', inputPrice: '' });
+    const [fieldsErrors, setFieldsErrors] = useState({
+        inputName: EMPTY_STRING,
+        inputSize: EMPTY_STRING,
+        inputPrice: EMPTY_STRING
+    });
     const [formIsValid, setFormIsValid] = useState(false);
 
-    const { products, error, createProductAsync, getAllAsync, clearError } = useProductContext();
+    const { products, errors, createProductAsync, getAllProductsAsync, clearErrors } = useProductContext();
 
     useEffect(() => {
-        getAllAsync();
+        getAllProductsAsync();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -39,7 +43,7 @@ const Products = () => {
 
     const validateField = (fieldName, value) => {
         const currentErrors = { ...fieldsErrors };
-        currentErrors[fieldName] = '';
+        currentErrors[fieldName] = EMPTY_STRING;
         switch (fieldName) {
             case 'inputSize':
                 if (value < PRODUCT_MIN_SIZE) currentErrors[fieldName] = `size should be above ${PRODUCT_MIN_SIZE}`;
@@ -59,14 +63,16 @@ const Products = () => {
 
     const checkFormIsValid = () => {
         const validValues =
-            fieldsErrors.inputSize === '' && fieldsErrors.inputName === '' && fieldsErrors.inputPrice === '';
+            fieldsErrors.inputSize === EMPTY_STRING &&
+            fieldsErrors.inputName === EMPTY_STRING &&
+            fieldsErrors.inputPrice === EMPTY_STRING;
         const notEmptyValues = inputName !== EMPTY_STRING;
         setFormIsValid(validValues && notEmptyValues);
     };
 
     const handleOnChange = (event, setter, fieldName) => {
         setter(event.target.value);
-        clearError();
+        clearErrors([]);
         validateField(fieldName, event.target.value);
     };
 
@@ -88,6 +94,7 @@ const Products = () => {
         setShowProducts((prev) => !prev);
     };
 
+    // SET FORM ELEMENTS
     const getFormInputs = () => {
         return [
             {
@@ -141,6 +148,7 @@ const Products = () => {
         ];
     };
 
+    //SET PRODUCTS DATA
     const getDataLabels = () => {
         const { id, ...props } = products[0];
         return Object.keys(props);
@@ -154,7 +162,7 @@ const Products = () => {
                     inputsInfo={getFormInputs()}
                     buttonsInfo={getFormButtons()}
                     title='Create Product'
-                    error={error}
+                    errors={errors}
                 />
                 {fieldsErrors.inputName ? <StyledError>{fieldsErrors.inputName}</StyledError> : null}
                 {fieldsErrors.inputPrice ? <StyledError>{fieldsErrors.inputPrice}</StyledError> : null}
@@ -163,7 +171,13 @@ const Products = () => {
             <StyledDataPart width='60%'>
                 <StyledLink onClick={changeShowProducts}>{showProducts ? 'hide Products' : 'show Products'}</StyledLink>
                 {showProducts && products.length > 0 ? (
-                    <DataContainer labelData={getDataLabels()} data={products} title='Products' />
+                    <DataContainer
+                        labelData={getDataLabels()}
+                        data={products}
+                        title='Products'
+                        height='85%'
+                        rowContainerHeight='80%'
+                    />
                 ) : null}
                 {showProducts && products.length === 0 ? <StyledError>No products</StyledError> : null}
             </StyledDataPart>

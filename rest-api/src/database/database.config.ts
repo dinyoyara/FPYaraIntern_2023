@@ -1,10 +1,10 @@
-import { SequelizeModuleOptions } from '@nestjs/sequelize';
 import * as dotenv from 'dotenv';
+import { SequelizeModuleOptions } from '@nestjs/sequelize';
 
-import { Customer } from '../customers/customers.model';
-import { Warehouse } from '../warehouses/warehouses.model';
 import { Product } from '../products/products.model';
 import { Movement } from '../movements/movements.model';
+import { Customer } from '../customers/customers.model';
+import { Warehouse } from '../warehouses/warehouses.model';
 
 dotenv.config();
 

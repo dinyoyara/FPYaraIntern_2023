@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import NavElement from './navElement';
 import StyledHeader from './styles.css';
-import useCustomerContext from '../../context/customer/hook';
 import { StyledTitle } from '../styles.css';
+import useCustomerContext from '../../context/customer/hook';
 
 const Header = ({ handleNavigation }) => {
     const { customer, logout } = useCustomerContext();

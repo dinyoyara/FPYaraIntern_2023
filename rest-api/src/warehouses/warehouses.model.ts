@@ -11,8 +11,6 @@ import {
   Table,
   Unique,
 } from 'sequelize-typescript';
-
-import { Customer } from '../customers/customers.model';
 import {
   NAME_MIN_LENGTH,
   HAZARDOUS,
@@ -20,7 +18,8 @@ import {
   UNKNOWN,
   WAREHOUSE_MIN_SIZE,
 } from '../constants';
-import { Movement } from 'src/movements/movements.model';
+import { Customer } from '../customers/customers.model';
+import { Movement } from '../movements/movements.model';
 
 @Table
 export class Warehouse extends Model {

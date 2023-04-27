@@ -1,10 +1,10 @@
 import { JwtGuard } from 'src/auth/guards';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 
-import { MovementsService } from './movements.service';
 import { MovementDto } from './dto';
 import { Movement } from './movements.model';
-import { GetCustomer } from 'src/auth/decorators';
+import { GetCustomer } from '../auth/decorators';
+import { MovementsService } from './movements.service';
 
 @UseGuards(JwtGuard)
 @Controller('movements')

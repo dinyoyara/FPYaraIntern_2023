@@ -4,11 +4,11 @@ import InputContainer from '../Input';
 import SelectContainer from '../Select';
 import Button from '../Button';
 
-const Form = ({ selectsInfo, inputsInfo, buttonsInfo, title, error }) => {
+const Form = ({ selectsInfo, inputsInfo, buttonsInfo, title, errors }) => {
     return (
         <StyledForm>
             <StyledTitle>{title}</StyledTitle>
-            {error ? <StyledError>{error}</StyledError> : null}
+            {errors.length > 0 ? errors.map((error, i) => <StyledError key={i}>{error}</StyledError>) : null}
             {inputsInfo.map((input) => (
                 <InputContainer
                     key={input.id}

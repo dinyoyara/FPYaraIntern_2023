@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { SequelizeModule } from '@nestjs/sequelize';
 import { Customer } from './customers.model';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
   imports: [SequelizeModule.forFeature([Customer])],
